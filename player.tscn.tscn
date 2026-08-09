@@ -11,6 +11,10 @@ height = 64.0
 radius = 32.0
 height = 66.0
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ipuy6"]
+radius = 17.0
+height = 64.0
+
 [node name="Player" type="CharacterBody2D" unique_id=2054372506]
 script = ExtResource("1_w6k1b")
 
@@ -31,3 +35,8 @@ position = Vector2(1, 2)
 position = Vector2(36, -1)
 shape = SubResource("CapsuleShape2D_ogn6l")
 disabled = true
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=383439083]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=1736833873]
+shape = SubResource("CapsuleShape2D_ipuy6")
