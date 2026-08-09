@@ -1,5 +1,5 @@
 ﻿My Rogue-like Game
-# [Название игры] — 2D Dark Fantasy Side-Scrolling Action Roguelike
+# [Fallen Sun(testname)] — 2D Dark Fantasy Side-Scrolling Action Roguelike
 
 ## О проекте
 
