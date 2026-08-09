@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://j3uaag728ffv"]
+
+[ext_resource type="Texture2D" uid="uid://b5kfia5a5b8bo" path="res://icon.svg" id="1_0pyxn"]
+[ext_resource type="Script" uid="uid://bxipg4ossmejj" path="res://player.tscn.gd" id="1_w6k1b"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xw8rn"]
+radius = 17.0
+height = 64.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ogn6l"]
+radius = 32.0
+height = 66.0
+
+[node name="Player" type="CharacterBody2D" unique_id=2054372506]
+script = ExtResource("1_w6k1b")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=596173541]
+position = Vector2(-1.9073486e-06, -1.000001)
+scale = Vector2(0.40624997, 0.546875)
+texture = ExtResource("1_0pyxn")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1997894809]
+shape = SubResource("CapsuleShape2D_xw8rn")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=2140164254]
+position = Vector2(1, 2)
+
+[node name="AttackHitbox" type="Area2D" parent="." unique_id=822592118]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackHitbox" unique_id=1593340088]
+position = Vector2(36, -1)
+shape = SubResource("CapsuleShape2D_ogn6l")
+disabled = true
