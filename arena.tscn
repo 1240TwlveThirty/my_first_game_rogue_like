@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://ciuaymq4cbbtq"]
+
+[ext_resource type="PackedScene" uid="uid://j3uaag728ffv" path="res://player.tscn.tscn" id="1_444vf"]
+[ext_resource type="Texture2D" uid="uid://vprjev765g3p" path="res://Gemini_Generated_Image_hx2aoehx2aoehx2a.png" id="1_ubfh8"]
+[ext_resource type="PackedScene" uid="uid://d3qipvigam8wy" path="res://enemy.tscn" id="2_27ga2"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ogn6l"]
+size = Vector2(1155, 38)
+
+[node name="Arena" type="Node2D" unique_id=1687990437]
+
+[node name="Background" type="Sprite2D" parent="." unique_id=633652721]
+position = Vector2(375.99997, 142.99998)
+scale = Vector2(1.0239824, 1.0885416)
+texture = ExtResource("1_ubfh8")
+
+[node name="Enemy" parent="." unique_id=940962256 instance=ExtResource("2_27ga2")]
+position = Vector2(136, 121)
+
+[node name="Player" parent="." unique_id=2054372506 instance=ExtResource("1_444vf")]
+position = Vector2(420, 135)
+
+[node name="Floor" type="StaticBody2D" parent="." unique_id=1260750472]
+position = Vector2(-21, 117)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=1208766797]
+position = Vector2(457, 356)
+shape = SubResource("RectangleShape2D_ogn6l")
+
+[node name="ColorRect" type="ColorRect" parent="Floor" unique_id=108179710]
+offset_left = -124.0
+offset_top = 336.0
+offset_right = 1028.0
+offset_bottom = 379.0
+color = Color(0.3542762, 0.48924953, 0.39760262, 1)
