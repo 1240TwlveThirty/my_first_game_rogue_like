@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://ciuaymq4cbbtq"]
 
-[ext_resource type="PackedScene" uid="uid://j3uaag728ffv" path="res://player.tscn.tscn" id="1_444vf"]
-[ext_resource type="Texture2D" uid="uid://vprjev765g3p" path="res://Gemini_Generated_Image_hx2aoehx2aoehx2a.png" id="1_ubfh8"]
-[ext_resource type="PackedScene" uid="uid://d3qipvigam8wy" path="res://enemy.tscn" id="2_27ga2"]
+[ext_resource type="Texture2D" uid="uid://vprjev765g3p" path="res://art/Gemini_Generated_Image_hx2aoehx2aoehx2a.png" id="1_dotur"]
+[ext_resource type="PackedScene" uid="uid://d3qipvigam8wy" path="res://enemies/enemy.tscn" id="2_0gwdx"]
+[ext_resource type="PackedScene" uid="uid://j3uaag728ffv" path="res://player/player.tscn.tscn" id="3_44uaw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ogn6l"]
 size = Vector2(1155, 38)
@@ -12,12 +12,12 @@ size = Vector2(1155, 38)
 [node name="Background" type="Sprite2D" parent="." unique_id=633652721]
 position = Vector2(375.99997, 142.99998)
 scale = Vector2(1.0239824, 1.0885416)
-texture = ExtResource("1_ubfh8")
+texture = ExtResource("1_dotur")
 
-[node name="Enemy" parent="." unique_id=940962256 instance=ExtResource("2_27ga2")]
+[node name="Enemy" parent="." unique_id=940962256 instance=ExtResource("2_0gwdx")]
 position = Vector2(136, 121)
 
-[node name="Player" parent="." unique_id=2054372506 instance=ExtResource("1_444vf")]
+[node name="Player" parent="." unique_id=2054372506 instance=ExtResource("3_44uaw")]
 position = Vector2(420, 135)
 
 [node name="Floor" type="StaticBody2D" parent="." unique_id=1260750472]

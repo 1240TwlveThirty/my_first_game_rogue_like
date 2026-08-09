@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://j3uaag728ffv"]
 
-[ext_resource type="Texture2D" uid="uid://b5kfia5a5b8bo" path="res://icon.svg" id="1_0pyxn"]
-[ext_resource type="Script" uid="uid://bxipg4ossmejj" path="res://player.tscn.gd" id="1_w6k1b"]
+[ext_resource type="Texture2D" uid="uid://b5kfia5a5b8bo" path="res://art/icon.svg" id="1_0pyxn"]
+[ext_resource type="Script" uid="uid://bxipg4ossmejj" path="res://player/player.tscn.gd" id="1_w6k1b"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xw8rn"]
 radius = 17.0

@@ -13,7 +13,7 @@ config_version=5
 config/name="First_Rogue_Like"
 run/main_scene="uid://ciuaymq4cbbtq"
 config/features=PackedStringArray("4.7", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://art/icon.svg"
 
 [display]
 
