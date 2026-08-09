@@ -1,18 +1,21 @@
 [gd_scene format=3 uid="uid://ciuaymq4cbbtq"]
 
-[ext_resource type="Texture2D" uid="uid://vprjev765g3p" path="res://art/Gemini_Generated_Image_hx2aoehx2aoehx2a.png" id="1_dotur"]
+[ext_resource type="Script" uid="uid://ct8tx2o7qjkxb" path="res://arena/arena.gd" id="1_44uaw"]
 [ext_resource type="PackedScene" uid="uid://d3qipvigam8wy" path="res://enemies/enemy.tscn" id="2_0gwdx"]
+[ext_resource type="Texture2D" uid="uid://vprjev765g3p" path="res://art/Gemini_Generated_Image_hx2aoehx2aoehx2a.png" id="2_8d55x"]
 [ext_resource type="PackedScene" uid="uid://j3uaag728ffv" path="res://player/player.tscn.tscn" id="3_44uaw"]
+[ext_resource type="PackedScene" uid="uid://dnc5x8x2j8efe" path="res://ui/game_over_ui.tscn" id="5_x52g8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ogn6l"]
 size = Vector2(1155, 38)
 
 [node name="Arena" type="Node2D" unique_id=1687990437]
+script = ExtResource("1_44uaw")
 
 [node name="Background" type="Sprite2D" parent="." unique_id=633652721]
 position = Vector2(375.99997, 142.99998)
 scale = Vector2(1.0239824, 1.0885416)
-texture = ExtResource("1_dotur")
+texture = ExtResource("2_8d55x")
 
 [node name="Enemy" parent="." unique_id=940962256 instance=ExtResource("2_0gwdx")]
 position = Vector2(136, 121)
@@ -33,3 +36,5 @@ offset_top = 336.0
 offset_right = 1028.0
 offset_bottom = 379.0
 color = Color(0.3542762, 0.48924953, 0.39760262, 1)
+
+[node name="GameOverUI" parent="." unique_id=1465918653 instance=ExtResource("5_x52g8")]

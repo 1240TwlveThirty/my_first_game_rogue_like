@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bp0ycp5rdvm5e" path="res://enemies/enemy.gd" id="1_4gyqm"]
 [ext_resource type="Texture2D" uid="uid://b5kfia5a5b8bo" path="res://art/icon.svg" id="1_7k104"]
+[ext_resource type="PackedScene" uid="uid://bh7q8ewrmls7v" path="res://health_component.tscn" id="3_orwns"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ogn6l"]
 radius = 47.0
@@ -57,6 +58,8 @@ position = Vector2(2, 1)
 shape = SubResource("CircleShape2D_3dgon")
 disabled = true
 debug_color = Color(0.7913475, 0.37588406, 0.5450799, 0.41960785)
+
+[node name="HealthComponent" parent="." unique_id=1082370403 instance=ExtResource("3_orwns")]
 
 [connection signal="body_entered" from="DetectionZone" to="." method="_on_detection_zone_body_entered"]
 [connection signal="body_exited" from="DetectionZone" to="." method="_on_detection_zone_body_exited"]

@@ -13,14 +13,15 @@ extends CharacterBody2D
 @export var attack_duration: float = 0.15
 @export var combo_reset_time: float = 0.6
 @export var combo_max_steps: int = 3
-@export var max_health: int = 5
 
-var health: int = 0
+signal player_died
+
 var is_attacking: bool = false
 var attack_timer: float = 0.0
 var combo_step: int = 0
 var combo_reset_timer: float = 0.0
 
+@onready var health_component: HealthComponent = $HealthComponent
 @onready var hurtbox: Area2D = $Hurtbox
 @onready var attack_hitbox: Area2D = $AttackHitbox
 @onready var attack_shape: CollisionShape2D = $AttackHitbox/CollisionShape2D
@@ -35,9 +36,9 @@ var dash_direction: float = 1.0
 
 func _ready() -> void:
 	add_to_group("player")
-	health = max_health
 	hurtbox.add_to_group("player_hurtbox")
 	attack_hitbox.area_entered.connect(_on_attack_hitbox_area_entered)
+	health_component.died.connect(_on_health_component_died)
 
 func _physics_process(delta: float) -> void:
 	if dash_cooldown_left > 0.0:
@@ -125,6 +126,8 @@ func _on_attack_hitbox_area_entered(area: Area2D) -> void:
 			enemy.take_damage(attack_damage)
 
 func take_damage(amount: int) -> void:
-	health -= amount
-	print("Игрок получил урон, здоровье: ", health)
-	# TODO: смерть и геймовер будут отдельной задачей
+	health_component.take_damage(amount)
+
+
+func _on_health_component_died() -> void:
+	player_died.emit()

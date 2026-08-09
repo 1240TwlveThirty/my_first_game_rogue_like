@@ -2,23 +2,22 @@ extends CharacterBody2D
 
 @export var speed: float = 120.0
 @export var gravity: float = 980.0
-@export var max_health: int = 3
 @export var attack_damage: int = 1
 @export var attack_duration: float = 0.3
 @export var attack_cooldown: float = 1.0
 
 var target: Node2D = null
-var health: int = 0
 var is_attacking: bool = false
 var attack_timer: float = 0.0
 var attack_cooldown_left: float = 0.0
 var in_attack_range: bool = false
 
+@onready var health_component: HealthComponent = $HealthComponent
 @onready var attack_hitbox: Area2D = $AttackHitbox
 @onready var attack_shape: CollisionShape2D = $AttackHitbox/CollisionShape2D
 
 func _ready() -> void:
-	health = max_health
+	health_component.died.connect(_on_health_component_died)
 	$Hurtbox.add_to_group("enemy_hurtbox")
 	attack_hitbox.area_entered.connect(_on_attack_hitbox_area_entered)
 	attack_shape.disabled = true
@@ -81,10 +80,11 @@ func _on_detection_zone_body_exited(body: Node2D) -> void:
 
 
 func take_damage(amount: int) -> void:
-	health -= amount
-	print("Враг получил урон, здоровье: ", health)
-	if health <= 0:
-		queue_free()
+	health_component.take_damage(amount)
+
+
+func _on_health_component_died() -> void:
+	queue_free()
 
 func _on_attack_range_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
