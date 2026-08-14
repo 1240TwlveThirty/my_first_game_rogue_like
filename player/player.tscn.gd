@@ -22,6 +22,7 @@ var attack_timer: float = 0.0
 var combo_step: int = 0
 var combo_reset_timer: float = 0.0
 
+@onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var hurtbox: Area2D = $Hurtbox
 @onready var attack_hitbox: Area2D = $AttackHitbox
@@ -45,6 +46,20 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if dash_cooldown_left > 0.0:
 		dash_cooldown_left -= delta
+
+	if is_dashing:
+		_process_dash(delta)
+	else:
+		_process_movement(delta)
+
+	_process_attack(delta)
+
+	move_and_slide()
+
+	if is_on_floor():
+		jumps_used = 0
+
+	_update_animation()
 
 	if is_dashing:
 		_process_dash(delta)
@@ -105,6 +120,18 @@ func _process_attack(delta: float) -> void:
 
 	if Input.is_action_just_pressed("Attack") and not is_dashing:
 		_start_attack()
+
+
+func _update_animation() -> void:
+	animated_sprite.flip_h = facing_direction < 0.0
+	if not is_on_floor():
+		animated_sprite.play("mid_air")
+	elif is_dashing:
+		animated_sprite.play("run")
+	elif velocity.x != 0.0:
+		animated_sprite.play("run")
+	else:
+		animated_sprite.play("idle")
 
 
 func _start_attack() -> void:
