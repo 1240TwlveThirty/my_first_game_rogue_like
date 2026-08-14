@@ -15,6 +15,7 @@ extends CharacterBody2D
 @export var combo_max_steps: int = 3
 
 signal player_died
+signal health_changed(current: int, max: int)
 
 var is_attacking: bool = false
 var attack_timer: float = 0.0
@@ -39,6 +40,7 @@ func _ready() -> void:
 	hurtbox.add_to_group("player_hurtbox")
 	attack_hitbox.area_entered.connect(_on_attack_hitbox_area_entered)
 	health_component.died.connect(_on_health_component_died)
+	health_component.health_changed.connect(_on_health_component_health_changed)
 
 func _physics_process(delta: float) -> void:
 	if dash_cooldown_left > 0.0:
@@ -129,5 +131,17 @@ func take_damage(amount: int) -> void:
 	health_component.take_damage(amount)
 
 
+func get_current_health() -> int:
+	return health_component.current_health
+
+
+func get_max_health() -> int:
+	return health_component.max_health
+
+
 func _on_health_component_died() -> void:
 	player_died.emit()
+
+
+func _on_health_component_health_changed(current: int, max: int) -> void:
+	health_changed.emit(current, max)

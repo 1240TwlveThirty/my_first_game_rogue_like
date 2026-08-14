@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://d3qipvigam8wy" path="res://enemies/enemy.tscn" id="2_0gwdx"]
 [ext_resource type="Texture2D" uid="uid://vprjev765g3p" path="res://art/Gemini_Generated_Image_hx2aoehx2aoehx2a.png" id="2_8d55x"]
 [ext_resource type="PackedScene" uid="uid://j3uaag728ffv" path="res://player/player.tscn.tscn" id="3_44uaw"]
+[ext_resource type="PackedScene" uid="uid://5ufqi05a3rpp" path="res://ui/hud.tscn" id="5_8d55x"]
 [ext_resource type="PackedScene" uid="uid://dnc5x8x2j8efe" path="res://ui/game_over_ui.tscn" id="5_x52g8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ogn6l"]
@@ -22,6 +23,8 @@ position = Vector2(136, 121)
 
 [node name="Player" parent="." unique_id=2054372506 instance=ExtResource("3_44uaw")]
 position = Vector2(420, 135)
+
+[node name="HUD" parent="." unique_id=265063051 instance=ExtResource("5_8d55x")]
 
 [node name="Floor" type="StaticBody2D" parent="." unique_id=1260750472]
 position = Vector2(-21, 117)
