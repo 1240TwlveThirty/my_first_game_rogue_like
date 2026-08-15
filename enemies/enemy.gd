@@ -5,12 +5,15 @@ extends CharacterBody2D
 @export var attack_damage: int = 1
 @export var attack_duration: float = 0.3
 @export var attack_cooldown: float = 1.0
+@export var stagger_duration: float = 0.4
 
 var target: Node2D = null
 var is_attacking: bool = false
 var attack_timer: float = 0.0
 var attack_cooldown_left: float = 0.0
 var in_attack_range: bool = false
+var is_staggered: bool = false
+var stagger_timer: float = 0.0
 
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var attack_hitbox: Area2D = $AttackHitbox
@@ -32,7 +35,12 @@ func _physics_process(delta: float) -> void:
 	if attack_cooldown_left > 0.0:
 		attack_cooldown_left -= delta
 
-	if is_attacking:
+	if is_staggered:
+		stagger_timer -= delta
+		velocity.x = 0.0
+		if stagger_timer <= 0.0:
+			is_staggered = false
+	elif is_attacking:
 		_process_attack(delta)
 		velocity.x = 0.0
 	elif target and in_attack_range and attack_cooldown_left <= 0.0:
@@ -85,6 +93,14 @@ func take_damage(amount: int) -> void:
 
 func _on_health_component_died() -> void:
 	queue_free()
+
+
+func _on_health_component_health_changed(_current: int, _max_health: int) -> void:
+	is_staggered = true
+	stagger_timer = stagger_duration
+	is_attacking = false
+	attack_shape.disabled = true
+
 
 func _on_attack_range_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):

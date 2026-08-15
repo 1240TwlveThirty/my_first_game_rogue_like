@@ -12,16 +12,16 @@ extends CharacterBody2D
 @export var attack_damage: int = 1
 @export var attack_duration: float = 0.15
 @export var combo_reset_time: float = 0.6
-@export var combo_max_steps: int = 3
+@export var combo_max_steps: int = 4
+@export var attack_reach: float = 40.0
 
 signal player_died
 signal health_changed(current: int, max: int)
 
-var is_attacking: bool = false
-var attack_timer: float = 0.0
 var combo_step: int = 0
 var combo_reset_timer: float = 0.0
 
+@onready var state_machine: StateMachine = $StateMachine
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var hurtbox: Area2D = $Hurtbox
@@ -31,10 +31,7 @@ var combo_reset_timer: float = 0.0
 var jumps_used: int = 0
 var facing_direction: float = 1.0
 
-var is_dashing: bool = false
-var dash_time_left: float = 0.0
 var dash_cooldown_left: float = 0.0
-var dash_direction: float = 1.0
 
 func _ready() -> void:
 	add_to_group("player")
@@ -42,110 +39,22 @@ func _ready() -> void:
 	attack_hitbox.area_entered.connect(_on_attack_hitbox_area_entered)
 	health_component.died.connect(_on_health_component_died)
 	health_component.health_changed.connect(_on_health_component_health_changed)
+	state_machine.start()
 
 func _physics_process(delta: float) -> void:
 	if dash_cooldown_left > 0.0:
 		dash_cooldown_left -= delta
 
-	if is_dashing:
-		_process_dash(delta)
-	else:
-		_process_movement(delta)
-
-	_process_attack(delta)
-
-	move_and_slide()
-
-	if is_on_floor():
-		jumps_used = 0
-
-	_update_animation()
-
-	if is_dashing:
-		_process_dash(delta)
-	else:
-		_process_movement(delta)
-
-	_process_attack(delta)
-
-	move_and_slide()
-
-	if is_on_floor():
-		jumps_used = 0
-
-
-func _process_movement(delta: float) -> void:
-	var direction := Input.get_axis("move_left", "move_right")
-	if direction != 0.0:
-		facing_direction = direction
-
-	velocity.x = direction * speed
-	velocity.y += gravity * delta
-
-	if Input.is_action_just_pressed("jump") and jumps_used < max_jumps:
-		velocity.y = jump_velocity
-		jumps_used += 1
-
-	if Input.is_action_just_pressed("dash") and dash_cooldown_left <= 0.0:
-		_start_dash()
-
-
-func _start_dash() -> void:
-	is_dashing = true
-	dash_time_left = dash_duration
-	dash_direction = facing_direction
-	velocity.y = 0.0
-
-
-func _process_dash(delta: float) -> void:
-	velocity.x = dash_direction * dash_speed
-	velocity.y = 0.0
-
-	dash_time_left -= delta
-	if dash_time_left <= 0.0:
-		is_dashing = false
-		dash_cooldown_left = dash_cooldown
-
-func _process_attack(delta: float) -> void:
 	if combo_reset_timer > 0.0:
 		combo_reset_timer -= delta
 		if combo_reset_timer <= 0.0:
 			combo_step = 0
 
-	if is_attacking:
-		attack_timer -= delta
-		if attack_timer <= 0.0:
-			_end_attack()
-		return
+	state_machine.physics_update(delta)
+	move_and_slide()
 
-	if Input.is_action_just_pressed("Attack") and not is_dashing:
-		_start_attack()
-
-
-func _update_animation() -> void:
-	animated_sprite.flip_h = facing_direction < 0.0
-	if not is_on_floor():
-		animated_sprite.play("mid_air")
-	elif is_dashing:
-		animated_sprite.play("run")
-	elif velocity.x != 0.0:
-		animated_sprite.play("run")
-	else:
-		animated_sprite.play("idle")
-
-
-func _start_attack() -> void:
-	is_attacking = true
-	attack_timer = attack_duration
-	attack_hitbox.position.x = abs(40.0) * facing_direction
-	attack_shape.disabled = false
-
-
-func _end_attack() -> void:
-	is_attacking = false
-	attack_shape.disabled = true
-	combo_step = (combo_step + 1) % combo_max_steps
-	combo_reset_timer = combo_reset_time
+	if is_on_floor():
+		jumps_used = 0
 
 
 func _on_attack_hitbox_area_entered(area: Area2D) -> void:
@@ -170,5 +79,5 @@ func _on_health_component_died() -> void:
 	player_died.emit()
 
 
-func _on_health_component_health_changed(current: int, max: int) -> void:
-	health_changed.emit(current, max)
+func _on_health_component_health_changed(current: int, max_health: int) -> void:
+	health_changed.emit(current, max_health)
