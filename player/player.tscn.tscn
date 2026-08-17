@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://c5klia50plbtj" path="res://art/Player/black_knight/BK_weapon_land.png" id="6_mqoty"]
 [ext_resource type="Texture2D" uid="uid://cxvh3rgwc1qh" path="res://art/Player/black_knight/BK_weapon_mid_air.png" id="7_8m1h6"]
 [ext_resource type="Texture2D" uid="uid://sucerd8dkqvh" path="res://art/Player/black_knight/BK_weapon_run.png" id="8_dw0xw"]
+[ext_resource type="Texture2D" uid="uid://38ujbm5t4g8i" path="res://art/Player/black_knight/BK_weapon_hurt.png" id="9_ih08w"]
 [ext_resource type="Script" uid="uid://b8oh6km7xf4mn" path="res://player/States/state_machine.gd" id="10_luyvj"]
 [ext_resource type="Script" uid="uid://c1k8ur5sra4su" path="res://player/States/idle_state.gd" id="11_mqoty"]
 [ext_resource type="Script" uid="uid://2rhulv2c3b2y" path="res://player/States/run_state.gd" id="12_8m1h6"]
@@ -22,6 +23,7 @@
 [ext_resource type="Script" uid="uid://65jph2akftqa" path="res://player/States/fall_state.gd" id="15_dw0xw"]
 [ext_resource type="Script" uid="uid://m42hljhbufjy" path="res://player/States/dash_state.gd" id="17_5afvk"]
 [ext_resource type="Script" uid="uid://du35nke10toe3" path="res://player/States/attack_state.gd" id="22_ohxwa"]
+[ext_resource type="Script" uid="uid://cy81voug6y7qi" path="res://player/States/hurt_state.gd" id="24_xyd64"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_oyskh"]
 atlas = ExtResource("2_iukm0")
@@ -259,6 +261,26 @@ region = Rect2(128, 64, 128, 64)
 atlas = ExtResource("3_yt0m6")
 region = Rect2(256, 64, 128, 64)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_r1cn8"]
+atlas = ExtResource("9_ih08w")
+region = Rect2(0, 0, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kuu3k"]
+atlas = ExtResource("9_ih08w")
+region = Rect2(128, 0, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2c2ur"]
+atlas = ExtResource("9_ih08w")
+region = Rect2(256, 0, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vovu0"]
+atlas = ExtResource("9_ih08w")
+region = Rect2(0, 64, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sgjb2"]
+atlas = ExtResource("9_ih08w")
+region = Rect2(128, 64, 128, 64)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_iukm0"]
 atlas = ExtResource("4_lo8sq")
 region = Rect2(0, 0, 128, 64)
@@ -413,9 +435,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_q8dib")
 }],
-"loop": 1,
+"loop": 0,
 "name": &"attack_1",
-"speed": 9.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -445,9 +467,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_1t65j")
 }],
-"loop": 1,
+"loop": 0,
 "name": &"attack_2",
-"speed": 9.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -483,9 +505,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_xg55o")
 }],
-"loop": 1,
+"loop": 0,
 "name": &"attack_3",
-"speed": 9.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -521,9 +543,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_c700o")
 }],
-"loop": 1,
+"loop": 0,
 "name": &"attack_4",
-"speed": 9.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -593,9 +615,29 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_45ora")
 }],
-"loop": 1,
+"loop": 0,
 "name": &"fall_light",
 "speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r1cn8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kuu3k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2c2ur")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vovu0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sgjb2")
+}],
+"loop": 0,
+"name": &"hurt",
+"speed": 11.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -662,7 +704,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_wekvm")
 }],
-"loop": 1,
+"loop": 0,
 "name": &"land",
 "speed": 12.0
 }, {
@@ -736,7 +778,7 @@ script = ExtResource("1_w6k1b")
 position = Vector2(15, -95)
 scale = Vector2(3.001, 3.001)
 sprite_frames = SubResource("SpriteFrames_ogn6l")
-animation = &"attack_1"
+animation = &"attack_4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1997894809]
 position = Vector2(-13, -58)
@@ -784,3 +826,6 @@ script = ExtResource("17_5afvk")
 
 [node name="Attack" type="Node" parent="StateMachine" unique_id=1483278893]
 script = ExtResource("22_ohxwa")
+
+[node name="Hurt" type="Node" parent="StateMachine" unique_id=226886600]
+script = ExtResource("24_xyd64")

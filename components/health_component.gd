@@ -6,6 +6,7 @@ class_name HealthComponent
 var current_health: int
 
 signal health_changed(current: int, max: int)
+signal damaged(amount: int)
 signal died
 
 
@@ -17,6 +18,7 @@ func take_damage(amount: int) -> void:
 	if current_health <= 0:
 		return
 	current_health = max(current_health - amount, 0)
+	damaged.emit(amount)
 	health_changed.emit(current_health, max_health)
 	if current_health <= 0:
 		died.emit()

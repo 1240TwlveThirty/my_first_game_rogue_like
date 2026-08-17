@@ -18,3 +18,7 @@ func exit() -> void:
 
 func physics_update(_delta: float) -> void:
 	pass
+
+
+func can_be_interrupted() -> bool:
+	return true

@@ -3,6 +3,10 @@ extends State
 var timer: float = 0.0
 
 
+func can_be_interrupted() -> bool:
+	return timer > player.attack_duration / 2.0
+
+
 func enter() -> void:
 	player.velocity.x = 0.0
 	timer = player.attack_duration

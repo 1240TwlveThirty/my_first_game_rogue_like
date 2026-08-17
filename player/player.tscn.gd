@@ -14,9 +14,10 @@ extends CharacterBody2D
 @export var combo_reset_time: float = 0.6
 @export var combo_max_steps: int = 4
 @export var attack_reach: float = 40.0
+@export var hurt_knockback_speed: float = 150.0
 
 signal player_died
-signal health_changed(current: int, max: int)
+signal health_changed(current: int, max_health: int)
 
 var combo_step: int = 0
 var combo_reset_timer: float = 0.0
@@ -39,6 +40,7 @@ func _ready() -> void:
 	attack_hitbox.area_entered.connect(_on_attack_hitbox_area_entered)
 	health_component.died.connect(_on_health_component_died)
 	health_component.health_changed.connect(_on_health_component_health_changed)
+	health_component.damaged.connect(_on_health_component_damaged)
 	state_machine.start()
 
 func _physics_process(delta: float) -> void:
@@ -81,3 +83,8 @@ func _on_health_component_died() -> void:
 
 func _on_health_component_health_changed(current: int, max_health: int) -> void:
 	health_changed.emit(current, max_health)
+
+
+func _on_health_component_damaged(_amount: int) -> void:
+	if state_machine.current_state.can_be_interrupted():
+		state_machine.transition_to("Hurt")
