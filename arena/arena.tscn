@@ -7,8 +7,11 @@
 [ext_resource type="PackedScene" uid="uid://5ufqi05a3rpp" path="res://ui/hud.tscn" id="5_8d55x"]
 [ext_resource type="PackedScene" uid="uid://dnc5x8x2j8efe" path="res://ui/game_over_ui.tscn" id="5_x52g8"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ipuy6"]
+size = Vector2(14.5, 302)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ogn6l"]
-size = Vector2(1155, 38)
+size = Vector2(1417, 38)
 
 [node name="Arena" type="Node2D" unique_id=1687990437]
 script = ExtResource("1_44uaw")
@@ -22,22 +25,48 @@ texture = ExtResource("2_8d55x")
 position = Vector2(136, 121)
 
 [node name="Player" parent="." unique_id=2054372506 instance=ExtResource("3_44uaw")]
-position = Vector2(420, 135)
+position = Vector2(594, 224)
 
 [node name="HUD" parent="." unique_id=265063051 instance=ExtResource("5_8d55x")]
+
+[node name="Wall2" type="StaticBody2D" parent="." unique_id=1804481020 groups=["climbable_wall"]]
+position = Vector2(-145, 456)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall2" unique_id=2008546576]
+position = Vector2(907.75, -158)
+shape = SubResource("RectangleShape2D_ipuy6")
+
+[node name="ColorRect" type="ColorRect" parent="Wall2" unique_id=1186360787]
+offset_left = 899.0
+offset_top = -311.0
+offset_right = 926.0
+offset_bottom = -7.0
+
+[node name="Wall" type="StaticBody2D" parent="." unique_id=1973359887 groups=["climbable_wall"]]
+position = Vector2(-145, 456)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall" unique_id=200825067]
+position = Vector2(526.5, -162)
+shape = SubResource("RectangleShape2D_ipuy6")
+
+[node name="ColorRect" type="ColorRect" parent="Wall" unique_id=1791818649]
+offset_left = 513.0
+offset_top = -306.0
+offset_right = 540.0
+offset_bottom = -2.0
 
 [node name="Floor" type="StaticBody2D" parent="." unique_id=1260750472]
 position = Vector2(-21, 117)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=1208766797]
-position = Vector2(457, 356)
+position = Vector2(400, 356)
 shape = SubResource("RectangleShape2D_ogn6l")
 
 [node name="ColorRect" type="ColorRect" parent="Floor" unique_id=108179710]
-offset_left = -124.0
-offset_top = 339.0
-offset_right = 1028.0
-offset_bottom = 379.0
+offset_left = -317.0
+offset_top = 336.0
+offset_right = 1100.0
+offset_bottom = 376.0
 color = Color(0.3542762, 0.48924953, 0.39760262, 1)
 
 [node name="GameOverUI" parent="." unique_id=1465918653 instance=ExtResource("5_x52g8")]

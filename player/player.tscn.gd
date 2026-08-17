@@ -4,6 +4,12 @@ extends CharacterBody2D
 @export var jump_velocity: float = -400.0
 @export var gravity: float = 980.0
 @export var max_jumps: int = 2
+@export var wall_slide_speed: float = 60.0
+@export var wall_slide_fast_speed: float = 220.0
+@export var wall_slide_acceleration: float = 500.0
+@export var wall_jump_horizontal_speed: float = 400.0
+@export var wall_jump_vertical_velocity: float = -420.0
+@export var wall_jump_grace_time: float = 0.15
 
 @export var dash_speed: float = 600.0
 @export var dash_duration: float = 0.2
@@ -33,6 +39,7 @@ var jumps_used: int = 0
 var facing_direction: float = 1.0
 
 var dash_cooldown_left: float = 0.0
+var wall_jump_grace_timer: float = 0.0
 
 func _ready() -> void:
 	add_to_group("player")
@@ -46,6 +53,8 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if dash_cooldown_left > 0.0:
 		dash_cooldown_left -= delta
+	if wall_jump_grace_timer > 0.0:
+		wall_jump_grace_timer -= delta
 
 	if combo_reset_timer > 0.0:
 		combo_reset_timer -= delta
@@ -75,6 +84,24 @@ func get_current_health() -> int:
 
 func get_max_health() -> int:
 	return health_component.max_health
+
+
+func get_climbable_wall_direction() -> float:
+	# Возвращает направление к стене относительно игрока: +1 - справа, -1 - слева, 0 - нет контакта.
+	# Источник направления - нормаль столкновения от физики, а не ввод игрока или facing_direction,
+	# чтобы не зависеть от того, что игрок делал кадром раньше.
+	if not is_on_wall():
+		return 0.0
+	var collision := get_last_slide_collision()
+	if collision == null:
+		return 0.0
+	var collider := collision.get_collider()
+	if not (collider is Node and collider.is_in_group("climbable_wall")):
+		return 0.0
+	var normal := collision.get_normal()
+	if absf(normal.x) < 0.1:
+		return 0.0
+	return -signf(normal.x)
 
 
 func _on_health_component_died() -> void:

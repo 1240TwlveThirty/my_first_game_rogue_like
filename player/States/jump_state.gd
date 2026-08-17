@@ -6,10 +6,15 @@ func enter() -> void:
 
 
 func physics_update(delta: float) -> void:
+	var direction := Input.get_axis("move_left", "move_right")
+	var wall_dir : float = player.get_climbable_wall_direction()
+
+	if wall_dir != 0.0 and player.wall_jump_grace_timer <= 0.0 and direction != -wall_dir:
+		state_machine.transition_to("WallClimb")
+		return
 
 	player.velocity.y += player.gravity * delta
 
-	var direction := Input.get_axis("move_left", "move_right")
 	if direction != 0.0:
 		player.facing_direction = direction
 		player.animated_sprite.flip_h = direction < 0.0
@@ -21,7 +26,6 @@ func physics_update(delta: float) -> void:
 
 	if player.velocity.y >= 0.0:
 		state_machine.transition_to("Fall")
-		
 
 	if Input.is_action_just_pressed("dash") and player.dash_cooldown_left <= 0.0:
 		state_machine.transition_to("Dash")
