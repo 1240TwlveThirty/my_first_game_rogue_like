@@ -3,27 +3,46 @@ extends CharacterBody2D
 @export var speed: float = 120.0
 @export var gravity: float = 980.0
 @export var attack_damage: int = 1
-@export var attack_duration: float = 0.3
+@export var attack_windup: float = 0.35
+@export var attack_active_duration: float = 0.15
+@export var attack_recovery: float = 0.3
 @export var attack_cooldown: float = 1.0
 @export var stagger_duration: float = 0.4
 
 var target: Node2D = null
-var is_attacking: bool = false
-var attack_timer: float = 0.0
 var attack_cooldown_left: float = 0.0
 var in_attack_range: bool = false
-var is_staggered: bool = false
-var stagger_timer: float = 0.0
+var was_on_floor: bool = true
 
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var attack_hitbox: Area2D = $AttackHitbox
 @onready var attack_shape: CollisionShape2D = $AttackHitbox/CollisionShape2D
+@onready var state_machine: StateMachine = $StateMachine
+@onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var hurtbox_shape: CollisionShape2D = $Hurtbox/CollisionShape2D
+
+
+func _on_attack_hitbox_area_entered(area: Area2D) -> void:
+	if area.is_in_group("player_hurtbox"):
+		var player := area.get_parent()
+		if player.has_method("take_damage"):
+			player.take_damage(attack_damage, self)
+
+
+func on_parried() -> void:
+	var stagger: Node = state_machine.states.get("Stagger")
+	if stagger:
+		stagger.is_punished = true
+	state_machine.transition_to("Stagger")
+
 
 func _ready() -> void:
 	health_component.died.connect(_on_health_component_died)
+	health_component.damaged.connect(_on_health_component_damaged)
 	$Hurtbox.add_to_group("enemy_hurtbox")
 	attack_hitbox.area_entered.connect(_on_attack_hitbox_area_entered)
 	attack_shape.disabled = true
+	state_machine.start()
 
 
 func _physics_process(delta: float) -> void:
@@ -35,46 +54,12 @@ func _physics_process(delta: float) -> void:
 	if attack_cooldown_left > 0.0:
 		attack_cooldown_left -= delta
 
-	if is_staggered:
-		stagger_timer -= delta
-		velocity.x = 0.0
-		if stagger_timer <= 0.0:
-			is_staggered = false
-	elif is_attacking:
-		_process_attack(delta)
-		velocity.x = 0.0
-	elif target and in_attack_range and attack_cooldown_left <= 0.0:
-		_start_attack()
-	elif target:
-		var direction: float = sign(target.global_position.x - global_position.x)
-		velocity.x = direction * speed
-	else:
-		velocity.x = 0.0
-
+	state_machine.physics_update(delta)
 	move_and_slide()
 
-
-func _start_attack() -> void:
-	is_attacking = true
-	attack_timer = attack_duration
-	var direction: float = sign(target.global_position.x - global_position.x)
-	attack_hitbox.position.x = abs(30.0) * direction
-	attack_shape.disabled = false
-
-
-func _process_attack(delta: float) -> void:
-	attack_timer -= delta
-	if attack_timer <= 0.0:
-		is_attacking = false
-		attack_shape.disabled = true
-		attack_cooldown_left = attack_cooldown
-
-
-func _on_attack_hitbox_area_entered(area: Area2D) -> void:
-	if area.is_in_group("player_hurtbox"):
-		var player := area.get_parent()
-		if player.has_method("take_damage"):
-			player.take_damage(attack_damage)
+	if is_on_floor() and not was_on_floor:
+		state_machine.transition_to("Land")
+	was_on_floor = is_on_floor()
 
 
 func _on_detection_zone_body_entered(body: Node2D) -> void:
@@ -92,14 +77,10 @@ func take_damage(amount: int) -> void:
 
 
 func _on_health_component_died() -> void:
-	queue_free()
+	state_machine.transition_to("Death")
 
-
-func _on_health_component_health_changed(_current: int, _max_health: int) -> void:
-	is_staggered = true
-	stagger_timer = stagger_duration
-	is_attacking = false
-	attack_shape.disabled = true
+func _on_health_component_damaged(_amount: int) -> void:
+	state_machine.transition_to("Stagger")
 
 
 func _on_attack_range_body_entered(body: Node2D) -> void:

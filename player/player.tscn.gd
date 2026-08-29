@@ -21,12 +21,21 @@ extends CharacterBody2D
 @export var combo_max_steps: int = 4
 @export var attack_reach: float = 40.0
 @export var hurt_knockback_speed: float = 150.0
+@export var heavy_attack_damage: int = 3
+@export var heavy_attack_duration: float = 0.4
+@export var heavy_attack_reach: float = 45.0
+@export var heavy_combo_max_steps: int = 3
+@export var heavy_combo_reset_time: float = 0.7
+
 
 signal player_died
 signal health_changed(current: int, max_health: int)
 
 var combo_step: int = 0
 var combo_reset_timer: float = 0.0
+var heavy_combo_step: int = 0
+var heavy_combo_reset_timer: float = 0.0
+var current_attack_damage: int = 0
 
 @onready var state_machine: StateMachine = $StateMachine
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -61,6 +70,11 @@ func _physics_process(delta: float) -> void:
 		if combo_reset_timer <= 0.0:
 			combo_step = 0
 
+	if heavy_combo_reset_timer > 0.0:
+		heavy_combo_reset_timer -= delta
+		if heavy_combo_reset_timer <= 0.0:
+			heavy_combo_step = 0
+
 	state_machine.physics_update(delta)
 	move_and_slide()
 
@@ -72,9 +86,13 @@ func _on_attack_hitbox_area_entered(area: Area2D) -> void:
 	if area.is_in_group("enemy_hurtbox"):
 		var enemy := area.get_parent()
 		if enemy.has_method("take_damage"):
-			enemy.take_damage(attack_damage)
+			enemy.take_damage(current_attack_damage)
 
-func take_damage(amount: int) -> void:
+func take_damage(amount: int, attacker: Node = null) -> void:
+	if state_machine.current_state.try_parry():
+		if attacker and attacker.has_method("on_parried"):
+			attacker.on_parried()
+		return
 	health_component.take_damage(amount)
 
 
@@ -105,7 +123,7 @@ func get_climbable_wall_direction() -> float:
 
 
 func _on_health_component_died() -> void:
-	player_died.emit()
+	state_machine.transition_to("Death")
 
 
 func _on_health_component_health_changed(current: int, max_health: int) -> void:

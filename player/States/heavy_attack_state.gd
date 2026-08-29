@@ -4,21 +4,23 @@ var timer: float = 0.0
 
 
 func can_be_interrupted() -> bool:
-	return timer > actor.attack_duration / 2.0
+	return timer > actor.heavy_attack_duration / 2.0
 
 
 func enter() -> void:
 	actor.velocity.x = 0.0
-	timer = actor.attack_duration
+	timer = actor.heavy_attack_duration
+	actor.current_attack_damage = actor.heavy_attack_damage
 
-	actor.heavy_combo_step = 0
-	actor.heavy_combo_reset_timer = 0.0
+	actor.combo_step = 0
+	actor.combo_reset_timer = 0.0
 
-	var animation_name := "attack_%d" % (actor.combo_step + 1)
+	var animation_name := "heavy_attack_%d" % (actor.heavy_combo_step + 1)
 	actor.animated_sprite.play(animation_name)
 
-	actor.attack_hitbox.position.x = actor.attack_reach * actor.facing_direction
+	actor.attack_hitbox.position.x = actor.heavy_attack_reach * actor.facing_direction
 	actor.attack_shape.set_deferred("disabled", false)
+
 
 func exit() -> void:
 	actor.attack_shape.set_deferred("disabled", true)
@@ -31,8 +33,8 @@ func physics_update(delta: float) -> void:
 
 
 func _end_attack() -> void:
-	actor.combo_step = (actor.combo_step + 1) % actor.combo_max_steps
-	actor.combo_reset_timer = actor.combo_reset_time
+	actor.heavy_combo_step = (actor.heavy_combo_step + 1) % actor.heavy_combo_max_steps
+	actor.heavy_combo_reset_timer = actor.heavy_combo_reset_time
 
 	if not actor.is_on_floor():
 		state_machine.transition_to("Fall")

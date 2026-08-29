@@ -1,6 +1,6 @@
 extends State
 
-const SAFETY_TIMEOUT: float = 1.0  # на случай, если "hurt" не доиграет штатно
+const SAFETY_TIMEOUT: float = 1.5
 
 var _safety_timer: float = 0.0
 
@@ -11,8 +11,8 @@ func can_be_interrupted() -> bool:
 
 func enter() -> void:
 	_safety_timer = 0.0
-	actor.velocity.x = -actor.facing_direction * actor.hurt_knockback_speed
-	actor.animated_sprite.play("hurt")
+	actor.velocity.x = 0.0
+	actor.animated_sprite.play("death")
 	actor.animated_sprite.animation_finished.connect(_on_animation_finished, CONNECT_ONE_SHOT)
 
 
@@ -26,21 +26,13 @@ func physics_update(delta: float) -> void:
 
 	_safety_timer += delta
 	if _safety_timer >= SAFETY_TIMEOUT:
-		push_warning("HurtState: анимация 'hurt' не завершилась вовремя, выхожу по таймауту")
-		_end_hurt()
+		push_warning("DeathState: анимация 'death' не завершилась вовремя, выхожу по таймауту")
+		_finish()
 
 
 func _on_animation_finished() -> void:
-	_end_hurt()
+	_finish()
 
 
-func _end_hurt() -> void:
-	if not actor.is_on_floor():
-		state_machine.transition_to("Fall")
-		return
-
-	var direction := Input.get_axis("move_left", "move_right")
-	if direction != 0.0:
-		state_machine.transition_to("Run")
-	else:
-		state_machine.transition_to("Idle")
+func _finish() -> void:
+	actor.player_died.emit()

@@ -14,8 +14,7 @@ func enter() -> void:
 func physics_update(delta: float) -> void:
 	timer -= delta
 	if timer <= 0.0:
-		var direction := Input.get_axis("move_left", "move_right")
-		if direction != 0.0:
-			state_machine.transition_to("Run")
+		if actor.target:
+			state_machine.transition_to("Chase")
 		else:
 			state_machine.transition_to("Idle")
