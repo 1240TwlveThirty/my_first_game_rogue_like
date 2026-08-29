@@ -1,15 +1,19 @@
 extends State
 
+@export var active_start_ratio: float = 0.35
+@export var active_end_ratio: float = 0.55
+
 var timer: float = 0.0
+var duration: float = 0.0
+var hitbox_active: bool = false
 
 
 func can_be_interrupted() -> bool:
-	return timer > actor.heavy_attack_duration / 2.0
+	return timer > duration / 2.0
 
 
 func enter() -> void:
 	actor.velocity.x = 0.0
-	timer = actor.heavy_attack_duration
 	actor.current_attack_damage = actor.heavy_attack_damage
 
 	actor.combo_step = 0
@@ -17,17 +21,28 @@ func enter() -> void:
 
 	var animation_name := "heavy_attack_%d" % (actor.heavy_combo_step + 1)
 	actor.animated_sprite.play(animation_name)
+	duration = get_animation_duration(actor.animated_sprite, animation_name)
+	timer = duration
 
 	actor.attack_hitbox.position.x = actor.heavy_attack_reach * actor.facing_direction
-	actor.attack_shape.set_deferred("disabled", false)
+	hitbox_active = false
+	actor.attack_shape.set_deferred("disabled", true)
 
 
 func exit() -> void:
 	actor.attack_shape.set_deferred("disabled", true)
+	hitbox_active = false
 
 
 func physics_update(delta: float) -> void:
 	timer -= delta
+
+	var elapsed := duration - timer
+	var should_be_active := elapsed >= duration * active_start_ratio and elapsed <= duration * active_end_ratio
+	if should_be_active != hitbox_active:
+		hitbox_active = should_be_active
+		actor.attack_shape.set_deferred("disabled", not hitbox_active)
+
 	if timer <= 0.0:
 		_end_attack()
 
@@ -35,6 +50,14 @@ func physics_update(delta: float) -> void:
 func _end_attack() -> void:
 	actor.heavy_combo_step = (actor.heavy_combo_step + 1) % actor.heavy_combo_max_steps
 	actor.heavy_combo_reset_timer = actor.heavy_combo_reset_time
+
+	if actor.consume_buffered_heavy_attack():
+		state_machine.transition_to("HeavyAttack")
+		return
+
+	if actor.consume_buffered_attack():
+		state_machine.transition_to("Attack")
+		return
 
 	if not actor.is_on_floor():
 		state_machine.transition_to("Fall")

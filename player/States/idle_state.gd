@@ -16,7 +16,7 @@ func physics_update(delta: float) -> void:
 		state_machine.transition_to("Dash")
 		return
 
-	if Input.is_action_just_pressed("Attack"):
+	if actor.consume_buffered_attack():
 		state_machine.transition_to("Attack")
 		return
 
@@ -30,7 +30,7 @@ func physics_update(delta: float) -> void:
 		state_machine.transition_to("Parry")
 		return
 
-	if Input.is_action_just_pressed("heavy_attack"):
+	if actor.consume_buffered_heavy_attack():
 		state_machine.transition_to("HeavyAttack")
 		return
 
