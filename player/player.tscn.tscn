@@ -1356,6 +1356,10 @@ shape = SubResource("CapsuleShape2D_xw8rn")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=2140164254]
 position = Vector2(-24, -36)
+limit_left = -330
+limit_top = -275
+limit_right = 1080
+limit_bottom = 560
 
 [node name="AttackHitbox" type="Area2D" parent="." unique_id=822592118]
 position = Vector2(-24, -15)
