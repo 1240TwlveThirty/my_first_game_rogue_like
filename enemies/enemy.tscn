@@ -618,8 +618,8 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ogn6l"]
-radius = 33.0
-height = 190.0
+radius = 68.0
+height = 185.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ogn6l"]
 radius = 409.44107
@@ -644,7 +644,7 @@ sprite_frames = SubResource("SpriteFrames_xb6rl")
 animation = &"death"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1992547627]
-position = Vector2(-43, 97)
+position = Vector2(-37, 93)
 shape = SubResource("CapsuleShape2D_ogn6l")
 
 [node name="DetectionZone" type="Area2D" parent="." unique_id=479575115]
