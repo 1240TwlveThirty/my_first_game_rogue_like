@@ -16,8 +16,6 @@ var target: Node2D = null
 var attack_cooldown_left: float = 0.0
 var in_attack_range: bool = false
 var was_on_floor: bool = true
-var is_frozen: bool = false
-var freeze_timer: float = 0.0
 
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var attack_hitbox: Area2D = $AttackHitbox
@@ -32,9 +30,8 @@ func _on_attack_hitbox_area_entered(area: Area2D) -> void:
 		var player := area.get_parent()
 		if player.has_method("take_damage"):
 			player.take_damage(attack_damage, self)
-			freeze(hitstop_duration)
-			if player.has_method("freeze"):
-				player.freeze(hitstop_duration)
+			state_machine.freeze(hitstop_duration)
+			player.state_machine.freeze(hitstop_duration)
 
 func on_parried() -> void:
 	var stagger: Node = state_machine.states.get("Stagger")
@@ -53,12 +50,6 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if is_frozen:
-		freeze_timer -= delta
-		if freeze_timer <= 0.0:
-			_unfreeze()
-		return
-
 	if not is_on_floor():
 		velocity.y += gravity * delta
 	else:
@@ -68,7 +59,8 @@ func _physics_process(delta: float) -> void:
 		attack_cooldown_left -= delta
 
 	state_machine.physics_update(delta)
-	move_and_slide()
+	if state_machine.freeze_time_left <= 0.0:
+		move_and_slide()
 
 	if is_on_floor() and not was_on_floor:
 		state_machine.transition_to("Land")
@@ -110,14 +102,3 @@ func _on_attack_range_body_entered(body: Node2D) -> void:
 func _on_attack_range_body_exited(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		in_attack_range = false
-
-
-func freeze(duration: float) -> void:
-	is_frozen = true
-	freeze_timer = duration
-	animated_sprite.speed_scale = 0.0
-
-
-func _unfreeze() -> void:
-	is_frozen = false
-	animated_sprite.speed_scale = 1.0

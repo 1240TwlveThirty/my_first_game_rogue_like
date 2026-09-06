@@ -5,6 +5,9 @@ extends Node
 
 var current_state: State
 var states: Dictionary = {}
+var freeze_time_left: float = 0.0
+
+@onready var actor: CharacterBody2D = owner as CharacterBody2D
 
 
 func _ready() -> void:
@@ -18,7 +21,22 @@ func start() -> void:
 	current_state.enter()
 
 
+## Hit-stop: замораживает и анимацию, и логику состояний на duration секунд.
+## Физику (move_and_slide) и таймеры буферов/комбо актор гейтит/тикает сам -
+## StateMachine отвечает только за то, что происходит внутри физики самого
+## состояния, и за проигрывание анимации.
+func freeze(duration: float) -> void:
+	freeze_time_left = duration
+	actor.animated_sprite.speed_scale = 0.0
+
+
 func physics_update(delta: float) -> void:
+	if freeze_time_left > 0.0:
+		freeze_time_left = max(freeze_time_left - delta, 0.0)
+		if freeze_time_left <= 0.0:
+			actor.animated_sprite.speed_scale = 1.0
+		return
+
 	current_state.physics_update(delta)
 
 

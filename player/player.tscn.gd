@@ -41,8 +41,6 @@ var combo_reset_timer: float = 0.0
 var heavy_combo_step: int = 0
 var heavy_combo_reset_timer: float = 0.0
 var current_attack_damage: int = 0
-var is_frozen: bool = false
-var freeze_timer: float = 0.0
 var attack_buffer_timer: float = 0.0
 var heavy_attack_buffer_timer: float = 0.0
 
@@ -71,12 +69,6 @@ func _ready() -> void:
 	state_machine.start()
 
 func _physics_process(delta: float) -> void:
-	if is_frozen:
-		freeze_timer -= delta
-		if freeze_timer <= 0.0:
-			_unfreeze()
-		return
-
 	if attack_buffer_timer > 0.0:
 		attack_buffer_timer -= delta
 	if heavy_attack_buffer_timer > 0.0:
@@ -104,7 +96,8 @@ func _physics_process(delta: float) -> void:
 		heavy_combo_step = 0
 
 	state_machine.physics_update(delta)
-	move_and_slide()
+	if state_machine.freeze_time_left <= 0.0:
+		move_and_slide()
 
 	if is_on_floor():
 		jumps_used = 0
@@ -115,9 +108,8 @@ func _on_attack_hitbox_area_entered(area: Area2D) -> void:
 		var enemy := area.get_parent()
 		if enemy.has_method("take_damage"):
 			enemy.take_damage(current_attack_damage)
-			freeze(hitstop_duration)
-			if enemy.has_method("freeze"):
-				enemy.freeze(hitstop_duration)
+			state_machine.freeze(hitstop_duration)
+			enemy.state_machine.freeze(hitstop_duration)
 
 func take_damage(amount: int, attacker: Node = null) -> void:
 	if state_machine.current_state.try_parry():
@@ -172,17 +164,6 @@ func _on_health_component_damaged(_amount: int) -> void:
 
 func shake_camera() -> void:
 	camera.shake()
-
-
-func freeze(duration: float) -> void:
-	is_frozen = true
-	freeze_timer = duration
-	animated_sprite.speed_scale = 0.0
-
-
-func _unfreeze() -> void:
-	is_frozen = false
-	animated_sprite.speed_scale = 1.0
 
 
 func buffer_attack() -> void:
