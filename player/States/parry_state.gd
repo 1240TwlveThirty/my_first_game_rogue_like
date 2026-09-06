@@ -4,10 +4,12 @@ enum Phase { ACTIVE, SUCCESS, MISS }
 
 @export var window_duration: float = 0.25
 @export var miss_duration: float = 0.3
+@export var success_safety_margin: float = 0.5  # запас поверх реальной длительности "parry" на случай, если анимация не доиграет штатно
 
 var phase: Phase = Phase.ACTIVE
 var timer: float = 0.0
-var _connected: bool = false
+var _success_safety_timer: float = 0.0
+var _success_safety_timeout: float = 0.0
 
 
 func can_be_interrupted() -> bool:
@@ -22,9 +24,8 @@ func enter() -> void:
 
 
 func exit() -> void:
-	if _connected and actor.animated_sprite.animation_finished.is_connected(_on_success_finished):
+	if actor.animated_sprite.animation_finished.is_connected(_on_success_finished):
 		actor.animated_sprite.animation_finished.disconnect(_on_success_finished)
-	_connected = false
 
 
 func physics_update(delta: float) -> void:
@@ -38,15 +39,21 @@ func physics_update(delta: float) -> void:
 		Phase.MISS:
 			if timer <= 0.0:
 				_exit_state()
+		Phase.SUCCESS:
+			_success_safety_timer += delta
+			if _success_safety_timer >= _success_safety_timeout:
+				push_warning("ParryState: анимация 'parry' не завершилась вовремя, выхожу по таймауту")
+				_exit_state()
 
 
 func try_parry() -> bool:
 	if phase != Phase.ACTIVE:
 		return false
 	phase = Phase.SUCCESS
+	_success_safety_timer = 0.0
+	_success_safety_timeout = get_animation_duration(actor.animated_sprite, "parry") + success_safety_margin
 	actor.animated_sprite.play("parry")
 	actor.animated_sprite.animation_finished.connect(_on_success_finished, CONNECT_ONE_SHOT)
-	_connected = true
 	return true
 
 
@@ -57,7 +64,6 @@ func _start_miss() -> void:
 
 
 func _on_success_finished() -> void:
-	_connected = false
 	_exit_state()
 
 

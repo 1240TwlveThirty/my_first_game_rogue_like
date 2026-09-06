@@ -96,6 +96,9 @@ func _on_health_component_damaged(_amount: int) -> void:
 	var hit_particles: GPUParticles2D = HIT_PARTICLES_SCENE.instantiate()
 	get_tree().current_scene.add_child(hit_particles)
 	hit_particles.global_position = hurtbox_shape.global_position
+	var player := get_tree().get_first_node_in_group("player")
+	if player and player.has_method("shake_camera"):
+		player.shake_camera()
 	state_machine.transition_to("Stagger")
 
 

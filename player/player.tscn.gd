@@ -51,6 +51,7 @@ var heavy_attack_buffer_timer: float = 0.0
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var hurtbox: Area2D = $Hurtbox
 @onready var hurtbox_shape: CollisionShape2D = $Hurtbox/CollisionShape2D
+@onready var camera: Camera2D = $Camera2D
 @onready var attack_hitbox: Area2D = $AttackHitbox
 @onready var attack_shape: CollisionShape2D = $AttackHitbox/CollisionShape2D
 
@@ -164,8 +165,13 @@ func _on_health_component_damaged(_amount: int) -> void:
 	var hit_particles: GPUParticles2D = HIT_PARTICLES_SCENE.instantiate()
 	get_tree().current_scene.add_child(hit_particles)
 	hit_particles.global_position = hurtbox_shape.global_position
+	shake_camera()
 	if state_machine.current_state.can_be_interrupted():
 		state_machine.transition_to("Hurt")
+
+
+func shake_camera() -> void:
+	camera.shake()
 
 
 func freeze(duration: float) -> void:
