@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+const HIT_PARTICLES_SCENE: PackedScene = preload("res://components/hit_particles.tscn")
+
 @export var speed: float = 120.0
 @export var gravity: float = 980.0
 @export var attack_damage: int = 1
@@ -91,6 +93,9 @@ func _on_health_component_died() -> void:
 	state_machine.transition_to("Death")
 
 func _on_health_component_damaged(_amount: int) -> void:
+	var hit_particles: GPUParticles2D = HIT_PARTICLES_SCENE.instantiate()
+	get_tree().current_scene.add_child(hit_particles)
+	hit_particles.global_position = hurtbox_shape.global_position
 	state_machine.transition_to("Stagger")
 
 

@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+const HIT_PARTICLES_SCENE: PackedScene = preload("res://components/hit_particles.tscn")
+
 @export var speed: float = 300.0
 @export var jump_velocity: float = -400.0
 @export var gravity: float = 980.0
@@ -48,6 +50,7 @@ var heavy_attack_buffer_timer: float = 0.0
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var hurtbox: Area2D = $Hurtbox
+@onready var hurtbox_shape: CollisionShape2D = $Hurtbox/CollisionShape2D
 @onready var attack_hitbox: Area2D = $AttackHitbox
 @onready var attack_shape: CollisionShape2D = $AttackHitbox/CollisionShape2D
 
@@ -158,6 +161,9 @@ func _on_health_component_health_changed(current: int, max_health: int) -> void:
 
 
 func _on_health_component_damaged(_amount: int) -> void:
+	var hit_particles: GPUParticles2D = HIT_PARTICLES_SCENE.instantiate()
+	get_tree().current_scene.add_child(hit_particles)
+	hit_particles.global_position = hurtbox_shape.global_position
 	if state_machine.current_state.can_be_interrupted():
 		state_machine.transition_to("Hurt")
 
