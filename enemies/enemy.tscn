@@ -618,60 +618,64 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ogn6l"]
-radius = 68.0
-height = 185.0
+radius = 43.6
+height = 89.8
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ogn6l"]
-radius = 409.44107
+radius = 230.6
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ipuy6"]
-radius = 47.0
-height = 148.0
+radius = 30.1
+height = 71.8
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ipuy6"]
-radius = 108.00463
+radius = 60.8
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ymuxt"]
-radius = 77.0
-height = 154.0
+radius = 49.4
+height = 74.7
 
 [node name="Enemy" type="CharacterBody2D" unique_id=940962256]
+collision_layer = 4
+collision_mask = 1
 script = ExtResource("1_4gyqm")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1036651880]
-scale = Vector2(4.387207, 6.1831055)
+scale = Vector2(2.8122423, 3.001)
 sprite_frames = SubResource("SpriteFrames_xb6rl")
 animation = &"death"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1992547627]
-position = Vector2(-37, 93)
+position = Vector2(-23.7, 45.1)
 shape = SubResource("CapsuleShape2D_ogn6l")
 
 [node name="DetectionZone" type="Area2D" parent="." unique_id=479575115]
+collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionZone" unique_id=567758963]
-position = Vector2(-47, 101)
+position = Vector2(-30.1, 49)
 shape = SubResource("CircleShape2D_ogn6l")
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=1300543631]
-position = Vector2(-25, -2)
+position = Vector2(-16, -1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=1654701050]
-position = Vector2(-22, 108)
+position = Vector2(-14.1, 52.4)
 shape = SubResource("CapsuleShape2D_ipuy6")
 
 [node name="AttackRange" type="Area2D" parent="." unique_id=948378466]
-position = Vector2(-68, 71)
+position = Vector2(0, 34.5)
+collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange" unique_id=674600382]
-position = Vector2(20, 27)
+position = Vector2(0, 13.1)
 shape = SubResource("CircleShape2D_ipuy6")
 
 [node name="AttackHitbox" type="Area2D" parent="." unique_id=2079626217]
-position = Vector2(-89, 71)
+position = Vector2(-57, 34.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackHitbox" unique_id=1390992859]
-position = Vector2(44, 31)
+position = Vector2(28.2, 15)
 shape = SubResource("CapsuleShape2D_ymuxt")
 disabled = true
 debug_color = Color(0.7913475, 0.37588406, 0.5450799, 0.41960785)

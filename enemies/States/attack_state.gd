@@ -39,12 +39,13 @@ func physics_update(delta: float) -> void:
 func _start_active() -> void:
 	phase = Phase.ACTIVE
 	timer = actor.attack_active_duration
-	actor.attack_hitbox.position.x = abs(30.0) * _direction
+	actor.attack_hitbox.position.x = abs(19.2) * _direction
 	# CollisionShape2D внутри AttackHitbox имеет собственное локальное смещение
-	# по x (44 в enemy.tscn) - если не зеркалить и его тоже, при развороте
-	# врага влево хитбокс остаётся у правого бока вместо того, чтобы уйти
-	# на противоположную сторону вместе с направлением атаки.
-	actor.attack_shape.position.x = abs(44.0) * _direction
+	# по x (28.2 в enemy.tscn, пересчитано пропорционально масштабу спрайта
+	# при выравнивании размера врага с игроком) - если не зеркалить и его
+	# тоже, при развороте врага влево хитбокс остаётся у правого бока вместо
+	# того, чтобы уйти на противоположную сторону вместе с направлением атаки.
+	actor.attack_shape.position.x = abs(28.2) * _direction
 	actor.attack_shape.set_deferred("disabled", false)
 
 
