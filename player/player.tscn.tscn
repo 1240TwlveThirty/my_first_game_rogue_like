@@ -1342,26 +1342,28 @@ height = 64.0
 
 [node name="Player" type="CharacterBody2D" unique_id=2054372506]
 position = Vector2(4, -145)
+collision_layer = 2
+collision_mask = 1
 script = ExtResource("1_w6k1b")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2020561060]
-position = Vector2(-17, 89)
+position = Vector2(0, 89)
 scale = Vector2(2.8122423, 3.001)
 sprite_frames = SubResource("SpriteFrames_ogn6l")
 animation = &"heavy_attack_3"
-offset = Vector2(5, -31.66)
+offset = Vector2(-1.04, -31.66)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1997894809]
-position = Vector2(-31, 36)
+position = Vector2(-15.5, 36)
 shape = SubResource("CapsuleShape2D_xw8rn")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=2140164254]
 position = Vector2(-24, -36)
 script = ExtResource("40_camshake")
 limit_left = -330
-limit_top = -275
-limit_right = 1080
-limit_bottom = 560
+limit_top = -250
+limit_right = 1590
+limit_bottom = 518
 
 [node name="AttackHitbox" type="Area2D" parent="." unique_id=822592118]
 position = Vector2(-24, -15)

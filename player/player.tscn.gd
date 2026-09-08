@@ -58,6 +58,7 @@ var facing_direction: float = 1.0
 
 var dash_cooldown_left: float = 0.0
 var wall_jump_grace_timer: float = 0.0
+var is_invulnerable: bool = false
 
 func _ready() -> void:
 	add_to_group("player")
@@ -115,6 +116,8 @@ func take_damage(amount: int, attacker: Node = null) -> void:
 	if state_machine.current_state.try_parry():
 		if attacker and attacker.has_method("on_parried"):
 			attacker.on_parried()
+		return
+	if is_invulnerable:
 		return
 	health_component.take_damage(amount)
 
