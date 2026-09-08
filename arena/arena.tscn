@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dnc5x8x2j8efe" path="res://ui/game_over_ui.tscn" id="5_x52g8"]
 [ext_resource type="Texture2D" uid="uid://bagjc0pgcyxpx" path="res://art/backgrounds/location1_far.png" id="6_bgfar"]
 [ext_resource type="Texture2D" uid="uid://clrg817x0ffku" path="res://art/backgrounds/location1_mid.png" id="7_bgmid"]
-[ext_resource type="TileSet" path="res://art/tiles/tileset.tres" id="8_tileset"]
+[ext_resource type="TileSet" uid="uid://43kk0uyxf0r8" path="res://art/tiles/tileset.tres" id="8_tileset"]
 
 [node name="Arena" type="Node2D" unique_id=1687990437]
 script = ExtResource("1_44uaw")
@@ -36,7 +36,7 @@ texture = ExtResource("7_bgmid")
 [node name="Enemy" parent="." unique_id=940962256 instance=ExtResource("2_0gwdx")]
 position = Vector2(500, 224)
 
-[node name="Enemy2" parent="." instance=ExtResource("2_0gwdx")]
+[node name="Enemy2" parent="." unique_id=1813457609 instance=ExtResource("2_0gwdx")]
 position = Vector2(1150, 150)
 
 [node name="Player" parent="." unique_id=2054372506 instance=ExtResource("3_44uaw")]
@@ -46,12 +46,12 @@ position = Vector2(100, 224)
 
 [node name="GameOverUI" parent="." unique_id=1465918653 instance=ExtResource("5_x52g8")]
 
-[node name="Walls" type="TileMapLayer" parent="." groups=["climbable_wall"]]
+[node name="Walls" type="TileMapLayer" parent="." unique_id=1938690718 groups=["climbable_wall"]]
 position = Vector2(-330, -250)
+tile_map_data = PackedByteArray("AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAAsAAAAAAAAAAAAdAAAAAAAAAAAAAAAdAAEAAAAAAAAAAAAdAAIAAAAAAAAAAAAdAAMAAAAAAAAAAAAdAAQAAAAAAAAAAAAdAAUAAAAAAAAAAAAdAAYAAAAAAAAAAAAdAAcAAAAAAAAAAAAdAAgAAAAAAAAAAAAdAAkAAAAAAAAAAAAdAAoAAAAAAAAAAAAdAAsAAAAAAAAAAAA=")
 tile_set = ExtResource("8_tileset")
-tile_map_data = PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
-[node name="Floor" type="TileMapLayer" parent="." groups=["climbable_wall"]]
+[node name="Floor" type="TileMapLayer" parent="." unique_id=11301022 groups=["climbable_wall"]]
 position = Vector2(-330, -250)
+tile_map_data = PackedByteArray("AAAAAAsAAQAAAAAAAAABAAsAAQAAAAAAAAACAAsAAQAAAAAAAAADAAsAAQAAAAAAAAAEAAsAAQAAAAAAAAAFAAsAAQAAAAAAAAAGAAsAAQAAAAAAAAAHAAsAAQAAAAAAAAAIAAsAAQAAAAAAAAAJAAsAAQAAAAAAAAAKAAsAAQAAAAAAAAALAAsAAQAAAAAAAAAMAAsAAQAAAAAAAAANAAsAAQAAAAAAAAAOAAsAAQAAAAAAAAAPAAsAAQAAAAAAAAAQAAsAAQAAAAAAAAARAAsAAQAAAAAAAAASAAsAAQAAAAAAAAATAAsAAQAAAAAAAAAUAAsAAQAAAAAAAAAVAAsAAQAAAAAAAAAWAAsAAQAAAAAAAAAXAAsAAQAAAAAAAAAYAAsAAQAAAAAAAAAZAAsAAQAAAAAAAAAaAAsAAQAAAAAAAAAbAAsAAQAAAAAAAAAcAAsAAQAAAAAAAAAdAAsAAQAAAAAAAAAFAAgAAQAAAAAAAAAGAAgAAQAAAAAAAAAHAAgAAQAAAAAAAAAIAAgAAQAAAAAAAAAJAAgAAQAAAAAAAAANAAYAAQAAAAAAAAAOAAYAAQAAAAAAAAAPAAYAAQAAAAAAAAAQAAYAAQAAAAAAAAARAAYAAQAAAAAAAAAVAAgAAQAAAAAAAAAWAAgAAQAAAAAAAAAXAAgAAQAAAAAAAAAYAAgAAQAAAAAAAAAZAAgAAQAAAAAAAAA=")
 tile_set = ExtResource("8_tileset")
-tile_map_data = PackedByteArray(0, 0, 0, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 3, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 5, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 6, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 7, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 8, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 9, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 10, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 11, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 12, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 13, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 14, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 15, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 16, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 17, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 18, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 19, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 20, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 21, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 22, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 23, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 24, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 25, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 26, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 27, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 28, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 29, 0, 11, 0, 1, 0, 0, 0, 0, 0, 0, 0, 5, 0, 8, 0, 1, 0, 0, 0, 0, 0, 0, 0, 6, 0, 8, 0, 1, 0, 0, 0, 0, 0, 0, 0, 7, 0, 8, 0, 1, 0, 0, 0, 0, 0, 0, 0, 8, 0, 8, 0, 1, 0, 0, 0, 0, 0, 0, 0, 9, 0, 8, 0, 1, 0, 0, 0, 0, 0, 0, 0, 13, 0, 6, 0, 1, 0, 0, 0, 0, 0, 0, 0, 14, 0, 6, 0, 1, 0, 0, 0, 0, 0, 0, 0, 15, 0, 6, 0, 1, 0, 0, 0, 0, 0, 0, 0, 16, 0, 6, 0, 1, 0, 0, 0, 0, 0, 0, 0, 17, 0, 6, 0, 1, 0, 0, 0, 0, 0, 0, 0, 21, 0, 8, 0, 1, 0, 0, 0, 0, 0, 0, 0, 22, 0, 8, 0, 1, 0, 0, 0, 0, 0, 0, 0, 23, 0, 8, 0, 1, 0, 0, 0, 0, 0, 0, 0, 24, 0, 8, 0, 1, 0, 0, 0, 0, 0, 0, 0, 25, 0, 8, 0, 1, 0, 0, 0, 0, 0, 0, 0)
