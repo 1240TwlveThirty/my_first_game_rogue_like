@@ -29,6 +29,10 @@ func exit() -> void:
 
 
 func physics_update(delta: float) -> void:
+	if Input.is_action_just_pressed("dash") and actor.dash_cooldown_left <= 0.0 and phase != Phase.ACTIVE:
+		state_machine.transition_to("Dash")
+		return
+
 	actor.velocity.x = 0.0
 	timer -= delta
 

@@ -35,6 +35,12 @@ func exit() -> void:
 
 
 func physics_update(delta: float) -> void:
+	if Input.is_action_just_pressed("dash") and actor.dash_cooldown_left <= 0.0:
+		actor.combo_step = (actor.combo_step + 1) % actor.combo_max_steps
+		actor.combo_reset_timer = actor.combo_reset_time
+		state_machine.transition_to("Dash")
+		return
+
 	timer -= delta
 
 	var elapsed := duration - timer
