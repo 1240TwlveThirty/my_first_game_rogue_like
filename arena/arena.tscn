@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://bagjc0pgcyxpx" path="res://art/backgrounds/location1_far.png" id="6_bgfar"]
 [ext_resource type="Texture2D" uid="uid://clrg817x0ffku" path="res://art/backgrounds/location1_mid.png" id="7_bgmid"]
 [ext_resource type="TileSet" uid="uid://43kk0uyxf0r8" path="res://art/tiles/tileset.tres" id="8_tileset"]
+[ext_resource type="PackedScene" path="res://environment/chain.tscn" id="9_chain"]
 
 [node name="Arena" type="Node2D" unique_id=1687990437]
 script = ExtResource("1_44uaw")
@@ -45,6 +46,12 @@ position = Vector2(100, 224)
 [node name="HUD" parent="." unique_id=265063051 instance=ExtResource("5_8d55x")]
 
 [node name="GameOverUI" parent="." unique_id=1465918653 instance=ExtResource("5_x52g8")]
+
+[node name="ChainA" parent="." instance=ExtResource("9_chain")]
+position = Vector2(250, 50)
+
+[node name="ChainB" parent="." instance=ExtResource("9_chain")]
+position = Vector2(750, 150)
 
 [node name="Walls" type="TileMapLayer" parent="." unique_id=1938690718 groups=["climbable_wall"]]
 position = Vector2(-330, -250)

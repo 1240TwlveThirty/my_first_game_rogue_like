@@ -13,6 +13,10 @@ func physics_update(delta: float) -> void:
 		state_machine.transition_to("WallClimb")
 		return
 
+	if actor.current_ladder != null and actor.ladder_grace_timer <= 0.0:
+		state_machine.transition_to("WallLadder")
+		return
+
 	actor.velocity.y += actor.gravity * delta
 
 	if direction != 0.0:

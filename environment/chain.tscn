@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://environment/wall_ladder.gd" id="1_ladder"]
+[ext_resource type="Texture2D" path="res://art/props/chain_texture.png" id="2_texture"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_chain"]
+size = Vector2(32, 256)
+
+[node name="Chain" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_ladder")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.03125, 0.03125)
+texture = ExtResource("2_texture")
+region_enabled = true
+region_rect = Rect2(0, 0, 1024, 8192)
+texture_repeat = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_chain")

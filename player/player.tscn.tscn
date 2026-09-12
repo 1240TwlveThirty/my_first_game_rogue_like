@@ -36,6 +36,7 @@
 [ext_resource type="Script" uid="uid://tugxeu4fw8s4" path="res://player/States/heavy_attack_state.gd" id="34_cxldh"]
 [ext_resource type="Script" uid="uid://bynoa61mkn0vs" path="res://player/States/parry_state.gd" id="35_sov14"]
 [ext_resource type="Script" path="res://components/camera_shake.gd" id="40_camshake"]
+[ext_resource type="Script" path="res://player/States/wall_ladder_state.gd" id="41_wallladder"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_oyskh"]
 atlas = ExtResource("2_iukm0")
@@ -1420,3 +1421,6 @@ script = ExtResource("34_cxldh")
 
 [node name="Parry" type="Node" parent="StateMachine" unique_id=329859597]
 script = ExtResource("35_sov14")
+
+[node name="WallLadder" type="Node" parent="StateMachine"]
+script = ExtResource("41_wallladder")

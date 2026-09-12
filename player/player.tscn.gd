@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 const HIT_PARTICLES_SCENE: PackedScene = preload("res://components/hit_particles.tscn")
+const DAGGER_SCENE: PackedScene = preload("res://weapons/dagger.tscn")
 
 @export var speed: float = 300.0
 @export var jump_velocity: float = -400.0
@@ -12,6 +13,7 @@ const HIT_PARTICLES_SCENE: PackedScene = preload("res://components/hit_particles
 @export var wall_jump_horizontal_speed: float = 400.0
 @export var wall_jump_vertical_velocity: float = -420.0
 @export var wall_jump_grace_time: float = 0.15
+@export var ladder_grace_time: float = 0.15
 
 @export var dash_speed: float = 600.0
 @export var dash_duration: float = 0.2
@@ -27,6 +29,8 @@ const HIT_PARTICLES_SCENE: PackedScene = preload("res://components/hit_particles
 @export var heavy_combo_max_steps: int = 3
 @export var heavy_combo_reset_time: float = 0.7
 @export var hitstop_duration: float = 0.08
+@export var dagger_cooldown: float = 1.5
+@export var dagger_throw_height_offset: float = 40.0
 
 
 signal player_died
@@ -59,6 +63,9 @@ var facing_direction: float = 1.0
 var dash_cooldown_left: float = 0.0
 var wall_jump_grace_timer: float = 0.0
 var is_invulnerable: bool = false
+var dagger_cooldown_left: float = 0.0
+var ladder_grace_timer: float = 0.0
+var current_ladder: Node2D = null
 
 func _ready() -> void:
 	add_to_group("player")
@@ -85,6 +92,13 @@ func _physics_process(delta: float) -> void:
 		dash_cooldown_left -= delta
 	if wall_jump_grace_timer > 0.0:
 		wall_jump_grace_timer -= delta
+	if ladder_grace_timer > 0.0:
+		ladder_grace_timer -= delta
+
+	if dagger_cooldown_left > 0.0:
+		dagger_cooldown_left -= delta
+	if Input.is_action_just_pressed("throw_dagger") and dagger_cooldown_left <= 0.0:
+		_throw_dagger()
 
 	if combo_reset_timer > 0.0 and state_machine.current_state.name != "Attack":
 		combo_reset_timer -= delta
@@ -148,6 +162,15 @@ func get_climbable_wall_direction() -> float:
 	return -signf(normal.x)
 
 
+func enter_ladder(ladder: Node2D) -> void:
+	current_ladder = ladder
+
+
+func exit_ladder(ladder: Node2D) -> void:
+	if current_ladder == ladder:
+		current_ladder = null
+
+
 func _on_health_component_died() -> void:
 	state_machine.transition_to("Death")
 
@@ -167,6 +190,13 @@ func _on_health_component_damaged(_amount: int) -> void:
 
 func shake_camera() -> void:
 	camera.shake()
+
+
+func _throw_dagger() -> void:
+	var dagger: Node2D = DAGGER_SCENE.instantiate()
+	get_tree().current_scene.add_child(dagger)
+	dagger.launch(global_position + Vector2(0, dagger_throw_height_offset), facing_direction)
+	dagger_cooldown_left = dagger_cooldown
 
 
 func buffer_attack() -> void:

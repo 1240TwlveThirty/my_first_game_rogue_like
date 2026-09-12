@@ -41,7 +41,18 @@ func on_parried() -> void:
 	state_machine.transition_to("Stagger")
 
 
+## Помечает следующий Stagger как "прибивание" (увеличенная длительность).
+## Флаг нужно выставить ДО take_damage() - урон уже сам переводит в
+## Stagger через сигнал damaged, и повторный transition_to("Stagger") в
+## уже активное состояние был бы no-op (см. нюанс от 17.08.2026).
+func pin_next_stagger() -> void:
+	var stagger: Node = state_machine.states.get("Stagger")
+	if stagger:
+		stagger.is_pinned = true
+
+
 func _ready() -> void:
+	add_to_group("enemy")
 	health_component.died.connect(_on_health_component_died)
 	health_component.damaged.connect(_on_health_component_damaged)
 	$Hurtbox.add_to_group("enemy_hurtbox")

@@ -2,16 +2,21 @@ extends State
 
 @export var punish_multiplier: float = 2.5
 @export var punish_extra_time: float = 0.3  # запас поверх анимации parry игрока, чтобы успеть нанести punish-удар
+@export var pin_duration: float = 1.5  # полный стан от кинжала, воткнувшегося во врага у стены
 
 var timer: float = 0.0
 var is_punished: bool = false
+var is_pinned: bool = false
 
 
 func enter() -> void:
 	var duration: float = actor.stagger_duration
 	if is_punished:
 		duration = _get_punish_duration()
+	elif is_pinned:
+		duration = pin_duration
 	is_punished = false
+	is_pinned = false
 
 	timer = duration
 	actor.velocity.x = 0.0
