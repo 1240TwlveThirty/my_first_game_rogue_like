@@ -11,6 +11,7 @@ const HIT_PARTICLES_SCENE: PackedScene = preload("res://components/hit_particles
 @export var attack_cooldown: float = 1.0
 @export var stagger_duration: float = 0.4
 @export var hitstop_duration: float = 0.08
+@export var horizontal_deadzone: float = 8.0
 
 var target: Node2D = null
 var attack_cooldown_left: float = 0.0

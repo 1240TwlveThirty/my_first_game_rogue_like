@@ -14,6 +14,11 @@ func physics_update(_delta: float) -> void:
 		state_machine.transition_to("Attack")
 		return
 
-	var direction: float = sign(actor.target.global_position.x - actor.global_position.x)
+	var delta_x: float = actor.target.global_position.x - actor.global_position.x
+	if abs(delta_x) < actor.horizontal_deadzone:
+		actor.velocity.x = 0.0
+		return
+
+	var direction: float = sign(delta_x)
 	actor.animated_sprite.flip_h = direction < 0.0
 	actor.velocity.x = direction * actor.speed
