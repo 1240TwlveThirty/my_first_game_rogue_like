@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="MeleeWeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://weapons/melee_weapon_data.gd" id="1_sword"]
+
+[resource]
+script = ExtResource("1_sword")
+display_name = "Меч"
+light_damage = 1
+light_combo_max_steps = 4
+light_combo_reset_time = 0.6
+light_reach = 40.0
+light_animation_prefix = "attack"
+heavy_damage = 3
+heavy_combo_max_steps = 3
+heavy_combo_reset_time = 0.7
+heavy_reach = 45.0
+heavy_animation_prefix = "heavy_attack"

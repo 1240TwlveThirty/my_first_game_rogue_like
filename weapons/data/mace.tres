@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="MeleeWeaponData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://weapons/melee_weapon_data.gd" id="1_mace"]
+
+[resource]
+script = ExtResource("1_mace")
+display_name = "Булава"
+light_damage = 2
+light_combo_max_steps = 2
+light_combo_reset_time = 0.5
+light_reach = 35.0
+light_animation_prefix = "attack"
+heavy_damage = 5
+heavy_combo_max_steps = 2
+heavy_combo_reset_time = 0.8
+heavy_reach = 40.0
+heavy_animation_prefix = "heavy_attack"

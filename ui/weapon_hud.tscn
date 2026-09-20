@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/weapon_hud.gd" id="1_weapon_hud"]
+
+[node name="WeaponHUD" type="CanvasLayer"]
+script = ExtResource("1_weapon_hud")
+
+[node name="Weapons" type="HBoxContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -40.0
+offset_right = 100.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="MaceLabel" type="Label" parent="Weapons"]
+layout_mode = 2
+text = "1) Булава"
+horizontal_alignment = 1
+
+[node name="SwordLabel" type="Label" parent="Weapons"]
+layout_mode = 2
+text = "2) Меч"
+horizontal_alignment = 1

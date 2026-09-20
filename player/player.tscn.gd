@@ -20,16 +20,12 @@ const ARROW_SCENE: PackedScene = preload("res://weapons/arrow.tscn")
 @export var dash_duration: float = 0.2
 @export var dash_cooldown: float = 0.6
 
-@export var attack_damage: int = 1
-@export var combo_reset_time: float = 0.6
-@export var combo_max_steps: int = 4
-@export var attack_reach: float = 40.0
 @export var hurt_knockback_speed: float = 150.0
-@export var heavy_attack_damage: int = 3
-@export var heavy_attack_reach: float = 45.0
-@export var heavy_combo_max_steps: int = 3
-@export var heavy_combo_reset_time: float = 0.7
 @export var hitstop_duration: float = 0.08
+
+@export var current_melee_weapon: MeleeWeaponData = preload("res://weapons/data/sword.tres")
+@export var mace_data: MeleeWeaponData = preload("res://weapons/data/mace.tres")
+@export var sword_data: MeleeWeaponData = preload("res://weapons/data/sword.tres")
 @export var dagger_cooldown: float = 1.5
 @export var dagger_throw_height_offset: float = 40.0
 @export var max_arrows_on_field: int = 3
@@ -38,6 +34,7 @@ const ARROW_SCENE: PackedScene = preload("res://weapons/arrow.tscn")
 
 signal player_died
 signal health_changed(current: int, max_health: int)
+signal melee_weapon_changed(weapon: MeleeWeaponData)
 
 
 const INPUT_BUFFER_WINDOW: float = 0.2
@@ -48,6 +45,7 @@ var combo_reset_timer: float = 0.0
 var heavy_combo_step: int = 0
 var heavy_combo_reset_timer: float = 0.0
 var current_attack_damage: int = 0
+var current_attack_is_heavy: bool = false
 var attack_buffer_timer: float = 0.0
 var heavy_attack_buffer_timer: float = 0.0
 
@@ -115,6 +113,12 @@ func _physics_process(delta: float) -> void:
 		elif TimeStop.can_start():
 			TimeStop.start()
 
+	if Input.is_action_just_pressed("select_weapon_1"):
+		_select_melee_weapon(mace_data)
+
+	if Input.is_action_just_pressed("select_weapon_2"):
+		_select_melee_weapon(sword_data)
+
 	if combo_reset_timer > 0.0 and state_machine.current_state.name != "Attack":
 		combo_reset_timer -= delta
 	if combo_reset_timer <= 0.0:
@@ -137,7 +141,7 @@ func _on_attack_hitbox_area_entered(area: Area2D) -> void:
 	if area.is_in_group("enemy_hurtbox"):
 		var enemy := area.get_parent()
 		if enemy.has_method("take_damage"):
-			enemy.take_damage(current_attack_damage)
+			enemy.take_damage(current_attack_damage, self, current_attack_is_heavy)
 			state_machine.freeze(hitstop_duration)
 			enemy.state_machine.freeze(hitstop_duration)
 	elif area.is_in_group("frozen_arrow") and TimeStop.is_active:
@@ -213,6 +217,39 @@ func _on_health_component_damaged(_amount: int) -> void:
 
 func shake_camera() -> void:
 	camera.shake()
+
+
+## Прямой выбор оружия по клавише (не переключатель) - смена в уже выбранное
+## оружие ничего не делает (не сбрасывает комбо и не дёргает state_machine
+## зря). "Безусловно" здесь - только в смысле can_be_interrupted(): смена
+## оружия обязана прервать любое текущее состояние (включая активную атаку и
+## парирование) независимо от его фазы. StateMachine.transition_to() сам по
+## себе can_be_interrupted() не проверяет (это делает вызывающий код, как в
+## _on_health_component_damaged для Hurt) - значит для безусловного
+## прерывания достаточно просто не делать эту проверку самим. А вот КУДА
+## переходить после прерывания - решается по is_on_floor()/направлению
+## ввода, тем же способом, что и в _end_attack() у attack_state.gd /
+## heavy_attack_state.gd, а не всегда в Idle.
+func _select_melee_weapon(weapon: MeleeWeaponData) -> void:
+	if current_melee_weapon == weapon:
+		return
+
+	current_melee_weapon = weapon
+	combo_step = 0
+	combo_reset_timer = 0.0
+	heavy_combo_step = 0
+	heavy_combo_reset_timer = 0.0
+
+	if not is_on_floor():
+		state_machine.transition_to("Fall")
+	else:
+		var direction := Input.get_axis("move_left", "move_right")
+		if direction != 0.0:
+			state_machine.transition_to("Run")
+		else:
+			state_machine.transition_to("Idle")
+
+	melee_weapon_changed.emit(current_melee_weapon)
 
 
 func _throw_dagger() -> void:

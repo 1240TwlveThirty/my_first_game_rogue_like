@@ -14,17 +14,18 @@ func can_be_interrupted() -> bool:
 
 func enter() -> void:
 	actor.velocity.x = 0.0
-	actor.current_attack_damage = actor.heavy_attack_damage
+	actor.current_attack_damage = actor.current_melee_weapon.heavy_damage
+	actor.current_attack_is_heavy = true
 
 	actor.combo_step = 0
 	actor.combo_reset_timer = 0.0
 
-	var animation_name := "heavy_attack_%d" % (actor.heavy_combo_step + 1)
+	var animation_name := "%s_%d" % [actor.current_melee_weapon.heavy_animation_prefix, actor.heavy_combo_step + 1]
 	actor.animated_sprite.play(animation_name)
 	duration = get_animation_duration(actor.animated_sprite, animation_name)
 	timer = duration
 
-	actor.attack_hitbox.position.x = actor.heavy_attack_reach * actor.facing_direction
+	actor.attack_hitbox.position.x = actor.current_melee_weapon.heavy_reach * actor.facing_direction
 	hitbox_active = false
 	actor.attack_shape.set_deferred("disabled", true)
 
@@ -36,8 +37,8 @@ func exit() -> void:
 
 func physics_update(delta: float) -> void:
 	if Input.is_action_just_pressed("dash") and actor.dash_cooldown_left <= 0.0 and (duration - timer) > duration * active_end_ratio:
-		actor.heavy_combo_step = (actor.heavy_combo_step + 1) % actor.heavy_combo_max_steps
-		actor.heavy_combo_reset_timer = actor.heavy_combo_reset_time
+		actor.heavy_combo_step = (actor.heavy_combo_step + 1) % actor.current_melee_weapon.heavy_combo_max_steps
+		actor.heavy_combo_reset_timer = actor.current_melee_weapon.heavy_combo_reset_time
 		state_machine.transition_to("Dash")
 		return
 
@@ -54,8 +55,8 @@ func physics_update(delta: float) -> void:
 
 
 func _end_attack() -> void:
-	actor.heavy_combo_step = (actor.heavy_combo_step + 1) % actor.heavy_combo_max_steps
-	actor.heavy_combo_reset_timer = actor.heavy_combo_reset_time
+	actor.heavy_combo_step = (actor.heavy_combo_step + 1) % actor.current_melee_weapon.heavy_combo_max_steps
+	actor.heavy_combo_reset_timer = actor.current_melee_weapon.heavy_combo_reset_time
 
 	if actor.consume_buffered_heavy_attack():
 		state_machine.transition_to("HeavyAttack")
