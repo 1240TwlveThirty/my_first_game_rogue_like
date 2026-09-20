@@ -9,8 +9,10 @@ extends CharacterBody2D
 @export var speed: float = 1000.0
 @export var damage: int = 2
 @export var max_charge_stacks: int = 6
+@export var max_aim_angle_degrees: float = 35.0
+@export var max_aim_range: float = 500.0
 
-var direction: float = 1.0
+var direction: Vector2 = Vector2.RIGHT
 var charge_multiplier: float = 1.0
 var charge_stacks: int = 0
 
@@ -22,17 +24,17 @@ func _ready() -> void:
 	charge_hurtbox.add_to_group("frozen_arrow")
 
 
-func launch(from_position: Vector2, launch_direction: float) -> void:
+func launch(from_position: Vector2, facing_direction: float) -> void:
 	global_position = from_position
-	direction = launch_direction
-	scale.x = direction
+	direction = ProjectileAim.find_aim_direction(from_position, facing_direction, max_aim_angle_degrees, max_aim_range)
+	rotation = direction.angle()
 
 
 func _physics_process(delta: float) -> void:
 	if TimeStop.is_active:
 		return
 
-	var collision := move_and_collide(Vector2(direction * speed * delta, 0.0))
+	var collision := move_and_collide(direction * speed * delta)
 	if collision != null:
 		_handle_collision(collision)
 
