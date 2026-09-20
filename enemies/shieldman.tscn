@@ -1,0 +1,104 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://enemies/shieldman.gd" id="1_shieldman"]
+[ext_resource type="SpriteFrames" path="res://enemies/shieldman_frames.tres" id="2_frames"]
+[ext_resource type="Script" path="res://core/fsm/state_machine.gd" id="3_statemachine"]
+[ext_resource type="PackedScene" path="res://components/health_component.tscn" id="4_health"]
+[ext_resource type="Script" path="res://enemies/States/shieldman_idle_state.gd" id="5_idle"]
+[ext_resource type="Script" path="res://enemies/States/shieldman_chase_state.gd" id="6_chase"]
+[ext_resource type="Script" path="res://enemies/States/shieldman_attack_state.gd" id="7_attack"]
+[ext_resource type="Script" path="res://enemies/States/stagger_state.gd" id="8_stagger"]
+[ext_resource type="Script" path="res://enemies/States/shieldman_land_state.gd" id="9_land"]
+[ext_resource type="Script" path="res://enemies/States/death_state.gd" id="10_death"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
+radius = 43.6
+height = 89.8
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_detection"]
+radius = 230.6
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hurtbox"]
+radius = 30.1
+height = 71.8
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_attackrange"]
+radius = 60.8
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_attackhitbox"]
+radius = 49.4
+height = 74.7
+
+[node name="Shieldman" type="CharacterBody2D"]
+collision_layer = 68
+collision_mask = 1
+script = ExtResource("1_shieldman")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.65, 0.65)
+sprite_frames = ExtResource("2_frames")
+animation = &"block"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-23.7, 45.1)
+shape = SubResource("CapsuleShape2D_body")
+
+[node name="DetectionZone" type="Area2D" parent="."]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionZone"]
+position = Vector2(-30.1, 49)
+shape = SubResource("CircleShape2D_detection")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+position = Vector2(-16, -1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(-14.1, 52.4)
+shape = SubResource("CapsuleShape2D_hurtbox")
+
+[node name="AttackRange" type="Area2D" parent="."]
+position = Vector2(0, 34.5)
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackRange"]
+position = Vector2(0, 13.1)
+shape = SubResource("CircleShape2D_attackrange")
+
+[node name="AttackHitbox" type="Area2D" parent="."]
+position = Vector2(-57, 34.5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackHitbox"]
+position = Vector2(28.2, 15)
+shape = SubResource("CapsuleShape2D_attackhitbox")
+disabled = true
+debug_color = Color(0.7913475, 0.37588406, 0.5450799, 0.41960785)
+
+[node name="HealthComponent" parent="." instance=ExtResource("4_health")]
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("3_statemachine")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("5_idle")
+
+[node name="Chase" type="Node" parent="StateMachine"]
+script = ExtResource("6_chase")
+attack_probability = 0.15
+
+[node name="Attack" type="Node" parent="StateMachine"]
+script = ExtResource("7_attack")
+
+[node name="Stagger" type="Node" parent="StateMachine"]
+script = ExtResource("8_stagger")
+
+[node name="Land" type="Node" parent="StateMachine"]
+script = ExtResource("9_land")
+
+[node name="Death" type="Node" parent="StateMachine"]
+script = ExtResource("10_death")
+
+[connection signal="body_entered" from="DetectionZone" to="." method="_on_detection_zone_body_entered"]
+[connection signal="body_exited" from="DetectionZone" to="." method="_on_detection_zone_body_exited"]
+[connection signal="body_entered" from="AttackRange" to="." method="_on_attack_range_body_entered"]
+[connection signal="body_exited" from="AttackRange" to="." method="_on_attack_range_body_exited"]

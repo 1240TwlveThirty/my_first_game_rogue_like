@@ -1,4 +1,5 @@
 extends CharacterBody2D
+class_name Enemy
 
 const HIT_PARTICLES_SCENE: PackedScene = preload("res://components/hit_particles.tscn")
 
@@ -12,12 +13,14 @@ const HIT_PARTICLES_SCENE: PackedScene = preload("res://components/hit_particles
 @export var stagger_duration: float = 0.4
 @export var hitstop_duration: float = 0.08
 @export var horizontal_deadzone: float = 8.0
+@export var lose_target_grace: float = 1.5
 
 var target: Node2D = null
 var attack_cooldown_left: float = 0.0
 var in_attack_range: bool = false
 var was_on_floor: bool = true
 var was_time_stopped: bool = false
+var lose_target_timer: float = 0.0
 
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var attack_hitbox: Area2D = $AttackHitbox
@@ -72,6 +75,11 @@ func _physics_process(delta: float) -> void:
 		animated_sprite.speed_scale = 1.0
 		was_time_stopped = false
 
+	if lose_target_timer > 0.0:
+		lose_target_timer -= delta
+		if lose_target_timer <= 0.0:
+			target = null
+
 	if not is_on_floor():
 		velocity.y += gravity * delta
 	else:
@@ -92,14 +100,25 @@ func _physics_process(delta: float) -> void:
 func _on_detection_zone_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		target = body
+		lose_target_timer = 0.0
 
 
+## Не сбрасывает target сразу - запускает грейс-таймер (тикает в
+## _physics_process). Если игрок вернётся в зону раньше, чем таймер
+## истечёт, _on_detection_zone_body_entered() выше обнулит его обратно, и
+## target ни на кадр не станет null - враг не "забывает" цель от короткого
+## моргания на краю DetectionZone.
 func _on_detection_zone_body_exited(body: Node2D) -> void:
 	if body == target:
-		target = null
+		lose_target_timer = lose_target_grace
 
 
-func take_damage(amount: int) -> void:
+## attacker/is_heavy - для базового врага не нужны, здесь просто игнорируются.
+## Расширенная сигнатура нужна, чтобы Shieldman (extends Enemy) мог
+## переопределить take_damage() и получить откуда и чем пришёл удар, не
+## меняя вызывающий код в player.tscn.gd/dagger.gd/arrow.gd - все они
+## по-прежнему могут звать take_damage() и без этих двух аргументов.
+func take_damage(amount: int, _attacker: Node = null, _is_heavy: bool = false) -> void:
 	health_component.take_damage(amount)
 
 

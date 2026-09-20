@@ -9,6 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://clrg817x0ffku" path="res://art/backgrounds/location1_mid.png" id="7_bgmid"]
 [ext_resource type="TileSet" uid="uid://43kk0uyxf0r8" path="res://art/tiles/tileset.tres" id="8_tileset"]
 [ext_resource type="PackedScene" path="res://environment/chain.tscn" id="9_chain"]
+[ext_resource type="PackedScene" path="res://ui/weapon_hud.tscn" id="10_weaponhud"]
+[ext_resource type="PackedScene" path="res://enemies/shieldman.tscn" id="11_shieldman"]
 
 [node name="Arena" type="Node2D" unique_id=1687990437]
 script = ExtResource("1_44uaw")
@@ -30,7 +32,7 @@ motion_scale = Vector2(0.5, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/Mid" unique_id=1082270552]
 texture_repeat = 1
-position = Vector2(375, 150)
+position = Vector2(148.00002, 84.00001)
 scale = Vector2(1.4, 1.4)
 texture = ExtResource("7_bgmid")
 
@@ -40,10 +42,15 @@ position = Vector2(-195, 224)
 [node name="Enemy2" parent="." unique_id=1813457609 instance=ExtResource("2_0gwdx")]
 position = Vector2(1150, 150)
 
+[node name="Shieldman" parent="." instance=ExtResource("11_shieldman")]
+position = Vector2(700, 224)
+
 [node name="Player" parent="." unique_id=2054372506 instance=ExtResource("3_44uaw")]
 position = Vector2(100, 224)
 
 [node name="HUD" parent="." unique_id=265063051 instance=ExtResource("5_8d55x")]
+
+[node name="WeaponHUD" parent="." unique_id=896341407 instance=ExtResource("10_weaponhud")]
 
 [node name="GameOverUI" parent="." unique_id=1465918653 instance=ExtResource("5_x52g8")]
 

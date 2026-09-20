@@ -3,25 +3,49 @@ extends State
 @export var punish_multiplier: float = 2.5
 @export var punish_extra_time: float = 0.3  # запас поверх анимации parry игрока, чтобы успеть нанести punish-удар
 @export var pin_duration: float = 1.5  # полный стан от кинжала, воткнувшегося во врага у стены
+@export var shield_break_stagger_duration: float = 1.5  # стан от разрушения щита у Shieldman
 
 var timer: float = 0.0
 var is_punished: bool = false
 var is_pinned: bool = false
+var is_shield_break: bool = false
+var _shield_break_active: bool = false
 
 
+## shield_active/set_shield_active()/restore_shield() существуют только у
+## Shieldman (extends Enemy), не у базового Enemy - поэтому везде, где этот
+## общий файл их трогает, доступ идёт через has_method(), а не напрямую,
+## как actor.attack_shape/actor.velocity и т.п. выше (эти поля есть у
+## ЛЮБОГО актора, использующего это состояние).
 func enter() -> void:
 	var duration: float = actor.stagger_duration
 	if is_punished:
 		duration = _get_punish_duration()
 	elif is_pinned:
 		duration = pin_duration
+	elif is_shield_break:
+		duration = shield_break_stagger_duration
+
+	_shield_break_active = is_shield_break
 	is_punished = false
 	is_pinned = false
+	is_shield_break = false
+
+	if actor.has_method("set_shield_active"):
+		actor.set_shield_active(false)
 
 	timer = duration
 	actor.velocity.x = 0.0
 	actor.attack_shape.set_deferred("disabled", true)
 	actor.animated_sprite.play("hurt")
+
+
+## Восстановление щита именно по выходу из "стана от разрушения щита", а не
+## из любого стана вообще - обычный/punish/pin-стан щит не чинят.
+func exit() -> void:
+	if _shield_break_active and actor.has_method("restore_shield"):
+		actor.restore_shield()
+	_shield_break_active = false
 
 
 # Punish-окно не должно закрываться раньше, чем у игрока доиграет анимация

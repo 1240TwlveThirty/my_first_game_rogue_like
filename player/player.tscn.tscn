@@ -1344,7 +1344,7 @@ height = 64.0
 [node name="Player" type="CharacterBody2D" unique_id=2054372506]
 position = Vector2(4, -145)
 collision_layer = 2
-collision_mask = 1
+collision_mask = 65
 script = ExtResource("1_w6k1b")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2020561060]
