@@ -10,9 +10,18 @@ const WORLD_LAYER_MASK: int = 1
 @export var speed: float = 900.0
 @export var damage: int = 1
 @export var wall_check_distance: float = 100.0
+@export var max_charge_stacks: int = 5
 
 var direction: float = 1.0
 var is_stuck: bool = false
+var charge_multiplier: float = 1.0
+var charge_stacks: int = 0
+
+@onready var charge_hurtbox: Area2D = $ChargeHurtbox
+
+
+func _ready() -> void:
+	charge_hurtbox.add_to_group("frozen_dagger")
 
 
 func launch(from_position: Vector2, launch_direction: float) -> void:
@@ -21,7 +30,22 @@ func launch(from_position: Vector2, launch_direction: float) -> void:
 	scale.x = direction
 
 
+## Вызывается из player.tscn.gd, когда AttackHitbox попадает по этой
+## стреле кинжала, пока она в группе "frozen_dagger" и TimeStop.is_active
+## == true (см. _on_attack_hitbox_area_entered). Переменная своя,
+## независимая от charge_multiplier/charge_stacks у arrow.gd - у каждого
+## оружия отдельный счётчик заряда, значения не делятся между скриптами.
+func add_charge() -> void:
+	if charge_stacks >= max_charge_stacks:
+		return
+	charge_stacks += 1
+	charge_multiplier = 1.0 + float(charge_stacks)
+
+
 func _physics_process(delta: float) -> void:
+	if TimeStop.is_active:
+		return
+
 	if is_stuck:
 		return
 
@@ -46,7 +70,7 @@ func _hit_enemy(enemy: Node, impact_position: Vector2) -> void:
 		enemy.pin_next_stagger()
 
 	if enemy.has_method("take_damage"):
-		enemy.take_damage(damage)
+		enemy.take_damage(int(round(damage * charge_multiplier)))
 
 	queue_free()
 
@@ -66,3 +90,4 @@ func _stick(collision: KinematicCollision2D) -> void:
 	global_position = collision.get_position()
 	velocity = Vector2.ZERO
 	is_stuck = true
+	charge_hurtbox.remove_from_group("frozen_dagger")

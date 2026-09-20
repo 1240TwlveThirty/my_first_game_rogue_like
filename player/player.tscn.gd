@@ -2,6 +2,7 @@ extends CharacterBody2D
 
 const HIT_PARTICLES_SCENE: PackedScene = preload("res://components/hit_particles.tscn")
 const DAGGER_SCENE: PackedScene = preload("res://weapons/dagger.tscn")
+const ARROW_SCENE: PackedScene = preload("res://weapons/arrow.tscn")
 
 @export var speed: float = 300.0
 @export var jump_velocity: float = -400.0
@@ -31,6 +32,8 @@ const DAGGER_SCENE: PackedScene = preload("res://weapons/dagger.tscn")
 @export var hitstop_duration: float = 0.08
 @export var dagger_cooldown: float = 1.5
 @export var dagger_throw_height_offset: float = 40.0
+@export var max_arrows_on_field: int = 3
+@export var shot_cooldown: float = 0.4
 
 
 signal player_died
@@ -66,6 +69,7 @@ var is_invulnerable: bool = false
 var dagger_cooldown_left: float = 0.0
 var ladder_grace_timer: float = 0.0
 var current_ladder: Node2D = null
+var shot_cooldown_left: float = 0.0
 
 func _ready() -> void:
 	add_to_group("player")
@@ -100,6 +104,17 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("throw_dagger") and dagger_cooldown_left <= 0.0:
 		_throw_dagger()
 
+	if shot_cooldown_left > 0.0:
+		shot_cooldown_left -= delta
+	if Input.is_action_just_pressed("shoot") and shot_cooldown_left <= 0.0:
+		_shoot_arrow()
+
+	if Input.is_action_just_pressed("time_stop"):
+		if TimeStop.is_active:
+			TimeStop.stop()
+		elif TimeStop.can_start():
+			TimeStop.start()
+
 	if combo_reset_timer > 0.0 and state_machine.current_state.name != "Attack":
 		combo_reset_timer -= delta
 	if combo_reset_timer <= 0.0:
@@ -125,6 +140,14 @@ func _on_attack_hitbox_area_entered(area: Area2D) -> void:
 			enemy.take_damage(current_attack_damage)
 			state_machine.freeze(hitstop_duration)
 			enemy.state_machine.freeze(hitstop_duration)
+	elif area.is_in_group("frozen_arrow") and TimeStop.is_active:
+		var arrow := area.get_parent()
+		if arrow.has_method("add_charge"):
+			arrow.add_charge()
+	elif area.is_in_group("frozen_dagger") and TimeStop.is_active:
+		var dagger := area.get_parent()
+		if dagger.has_method("add_charge"):
+			dagger.add_charge()
 
 func take_damage(amount: int, attacker: Node = null) -> void:
 	if state_machine.current_state.try_parry():
@@ -197,6 +220,15 @@ func _throw_dagger() -> void:
 	get_tree().current_scene.add_child(dagger)
 	dagger.launch(global_position + Vector2(0, dagger_throw_height_offset), facing_direction)
 	dagger_cooldown_left = dagger_cooldown
+
+
+func _shoot_arrow() -> void:
+	if get_tree().get_nodes_in_group("player_arrow").size() >= max_arrows_on_field:
+		return
+	var arrow: Node2D = ARROW_SCENE.instantiate()
+	get_tree().current_scene.add_child(arrow)
+	arrow.launch(global_position + Vector2(0, dagger_throw_height_offset), facing_direction)
+	shot_cooldown_left = shot_cooldown
 
 
 func buffer_attack() -> void:

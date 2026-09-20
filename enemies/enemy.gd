@@ -17,6 +17,7 @@ var target: Node2D = null
 var attack_cooldown_left: float = 0.0
 var in_attack_range: bool = false
 var was_on_floor: bool = true
+var was_time_stopped: bool = false
 
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var attack_hitbox: Area2D = $AttackHitbox
@@ -62,6 +63,15 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if TimeStop.is_active:
+		animated_sprite.speed_scale = 0.0
+		was_time_stopped = true
+		return
+
+	if was_time_stopped:
+		animated_sprite.speed_scale = 1.0
+		was_time_stopped = false
+
 	if not is_on_floor():
 		velocity.y += gravity * delta
 	else:
