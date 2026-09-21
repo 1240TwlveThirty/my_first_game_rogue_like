@@ -1,16 +1,15 @@
 [gd_scene format=4 uid="uid://ciuaymq4cbbtq"]
 
 [ext_resource type="Script" uid="uid://ct8tx2o7qjkxb" path="res://arena/arena.gd" id="1_44uaw"]
-[ext_resource type="PackedScene" uid="uid://d3qipvigam8wy" path="res://enemies/enemy.tscn" id="2_0gwdx"]
 [ext_resource type="PackedScene" uid="uid://j3uaag728ffv" path="res://player/player.tscn.tscn" id="3_44uaw"]
 [ext_resource type="PackedScene" uid="uid://5ufqi05a3rpp" path="res://ui/hud.tscn" id="5_8d55x"]
 [ext_resource type="PackedScene" uid="uid://dnc5x8x2j8efe" path="res://ui/game_over_ui.tscn" id="5_x52g8"]
 [ext_resource type="Texture2D" uid="uid://bagjc0pgcyxpx" path="res://art/backgrounds/location1_far.png" id="6_bgfar"]
 [ext_resource type="Texture2D" uid="uid://clrg817x0ffku" path="res://art/backgrounds/location1_mid.png" id="7_bgmid"]
 [ext_resource type="TileSet" uid="uid://43kk0uyxf0r8" path="res://art/tiles/tileset.tres" id="8_tileset"]
-[ext_resource type="PackedScene" path="res://environment/chain.tscn" id="9_chain"]
 [ext_resource type="PackedScene" path="res://ui/weapon_hud.tscn" id="10_weaponhud"]
-[ext_resource type="PackedScene" path="res://enemies/shieldman.tscn" id="11_shieldman"]
+[ext_resource type="PackedScene" path="res://enemies/messenger.tscn" id="13_messenger"]
+[ext_resource type="PackedScene" path="res://environment/hub_portal.tscn" id="14_hubportal"]
 
 [node name="Arena" type="Node2D" unique_id=1687990437]
 script = ExtResource("1_44uaw")
@@ -32,18 +31,14 @@ motion_scale = Vector2(0.5, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/Mid" unique_id=1082270552]
 texture_repeat = 1
-position = Vector2(148.00002, 84.00001)
+position = Vector2(448.00003, 115)
 scale = Vector2(1.4, 1.4)
 texture = ExtResource("7_bgmid")
 
-[node name="Enemy" parent="." unique_id=940962256 instance=ExtResource("2_0gwdx")]
-position = Vector2(-195, 224)
-
-[node name="Enemy2" parent="." unique_id=1813457609 instance=ExtResource("2_0gwdx")]
-position = Vector2(1150, 150)
-
-[node name="Shieldman" parent="." instance=ExtResource("11_shieldman")]
+[node name="Messenger" parent="." unique_id=1329511623 instance=ExtResource("13_messenger")]
 position = Vector2(700, 224)
+speed = 120.0
+attack_cooldown = 1.0
 
 [node name="Player" parent="." unique_id=2054372506 instance=ExtResource("3_44uaw")]
 position = Vector2(100, 224)
@@ -54,11 +49,8 @@ position = Vector2(100, 224)
 
 [node name="GameOverUI" parent="." unique_id=1465918653 instance=ExtResource("5_x52g8")]
 
-[node name="ChainA" parent="." unique_id=1382997764 instance=ExtResource("9_chain")]
-position = Vector2(250, 50)
-
-[node name="ChainB" parent="." unique_id=455150585 instance=ExtResource("9_chain")]
-position = Vector2(750, 150)
+[node name="HubPortal" parent="." unique_id=1566675869 instance=ExtResource("14_hubportal")]
+position = Vector2(1450, 380)
 
 [node name="Walls" type="TileMapLayer" parent="." unique_id=1938690718 groups=["climbable_wall"]]
 position = Vector2(-330, -250)

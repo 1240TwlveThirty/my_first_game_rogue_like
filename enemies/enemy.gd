@@ -66,7 +66,7 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if TimeStop.is_active:
+	if TimeStop.is_active and TimeStop.exempt_actor != self:
 		animated_sprite.speed_scale = 0.0
 		was_time_stopped = true
 		return

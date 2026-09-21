@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://enemies/projectiles/enemy_arrow.gd" id="1_arrow"]
+[ext_resource type="Texture2D" path="res://art/Enemies/GandalfHardcore Archer/arrow.png" id="2_texture"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_arrow_body"]
+size = Vector2(28, 6)
+
+[node name="EnemyArrow" type="CharacterBody2D"]
+collision_layer = 128
+collision_mask = 3
+script = ExtResource("1_arrow")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_texture")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_arrow_body")

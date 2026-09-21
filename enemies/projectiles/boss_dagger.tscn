@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://enemies/projectiles/boss_dagger.gd" id="1_bossdagger"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bossdagger"]
+size = Vector2(20, 6)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bossdagger_break"]
+size = Vector2(28, 10)
+
+[node name="BossDagger" type="CharacterBody2D"]
+collision_layer = 8
+collision_mask = 3
+script = ExtResource("1_bossdagger")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -10.0
+offset_top = -3.0
+offset_right = 10.0
+offset_bottom = 3.0
+mouse_filter = 2
+color = Color(0.55, 0.12, 0.12, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_bossdagger")
+
+[node name="BreakHurtbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BreakHurtbox"]
+shape = SubResource("RectangleShape2D_bossdagger_break")

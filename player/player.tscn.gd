@@ -68,6 +68,7 @@ var dagger_cooldown_left: float = 0.0
 var ladder_grace_timer: float = 0.0
 var current_ladder: Node2D = null
 var shot_cooldown_left: float = 0.0
+var was_time_stopped: bool = false
 
 func _ready() -> void:
 	add_to_group("player")
@@ -111,7 +112,7 @@ func _physics_process(delta: float) -> void:
 		if TimeStop.is_active:
 			TimeStop.stop()
 		elif TimeStop.can_start():
-			TimeStop.start()
+			TimeStop.start(self)
 
 	if Input.is_action_just_pressed("select_weapon_1"):
 		_select_melee_weapon(mace_data)
@@ -128,6 +129,34 @@ func _physics_process(delta: float) -> void:
 		heavy_combo_reset_timer -= delta
 	if heavy_combo_reset_timer <= 0.0:
 		heavy_combo_step = 0
+
+	# Чужая заморозка тайм-стопа (TimeStop.exempt_actor - не игрок, например
+	# будущий телепорт-тайм-стоп Гонца) - тот же паттерн edge-detection, что
+	# и в enemy.gd (was_on_floor): гасим анимацию, запоминаем факт заморозки,
+	# не вызываем state_machine.physics_update()/move_and_slide() в этом
+	# кадре. Ввод (Attack/dash/throw_dagger/shoot/time_stop/выбор оружия) и
+	# таймеры комбо/кулдаунов уже обработаны ВЫШЕ этой проверки и продолжают
+	# тикать независимо от неё - иначе игрок не смог бы сам выключить чужую
+	# заморозку кнопкой "time_stop" или воспользоваться луком/кинжалом, пока
+	# пойман в ней. Когда TimeStop.exempt_actor == self (собственный тайм-стоп
+	# игрока) - условие ложно, игрок продолжает двигаться как обычно.
+	if TimeStop.is_active and TimeStop.exempt_actor != self:
+		animated_sprite.speed_scale = 0.0
+		was_time_stopped = true
+		return
+
+	if was_time_stopped:
+		animated_sprite.speed_scale = 1.0
+		was_time_stopped = false
+
+	# Диалог (сейчас - предсмертная сцена Гонца, позже - любой другой NPC)
+	# блокирует обычный ввод/движение игрока - НО не тогда, когда игрок
+	# уже в Death: его SAFETY_TIMEOUT/выход в player_died обязаны идти
+	# независимо от чужого диалога, иначе получаем ровно ту гонку с
+	# get_tree().paused, которую эта правка и устраняет (см. CLAUDE.md/чат
+	# про одновременную смерть игрока и Гонца).
+	if DialogueState.is_active and state_machine.current_state.name != "Death":
+		return
 
 	state_machine.physics_update(delta)
 	if state_machine.freeze_time_left <= 0.0:
@@ -152,15 +181,60 @@ func _on_attack_hitbox_area_entered(area: Area2D) -> void:
 		var dagger := area.get_parent()
 		if dagger.has_method("add_charge"):
 			dagger.add_charge()
+	elif area.is_in_group("boss_dagger"):
+		# Разбивание летящего кинжала Гонца обычной атакой - бинарно, без
+		# урона в любую сторону, работает одинаково от light/heavy
+		# (просто "долетел до AttackHitbox - сломан"), тот же паттерн
+		# хит-партиклов, что и везде в проекте.
+		var boss_dagger := area.get_parent()
+		var break_particles: GPUParticles2D = HIT_PARTICLES_SCENE.instantiate()
+		get_tree().current_scene.add_child(break_particles)
+		break_particles.global_position = boss_dagger.global_position
+		boss_dagger.queue_free()
 
-func take_damage(amount: int, attacker: Node = null) -> void:
+## Возвращает true, если удар реально прошёл (не парирован, не поглощён
+## i-frames дэша) - нужно вызывающему коду, которому важно ЗНАТЬ, попал ли
+## удар, прежде чем делать что-то ещё (см. enemies/projectiles/
+## boss_dagger.gd - pin_player() зовётся, только если здесь вернулось true,
+## иначе успешно уклонившийся/запарировавший игрок оказался бы прибит без
+## единого полученного урона). Существующие вызывающие (enemy.gd,
+## messenger_teleport_state.gd, enemy_arrow.gd) как звали это как обычный
+## оператор, игнорируя возврат - так и продолжают, синтаксически ничего не
+## меняется для них.
+func take_damage(amount: int, attacker: Node = null) -> bool:
 	if state_machine.current_state.try_parry():
 		if attacker and attacker.has_method("on_parried"):
 			attacker.on_parried()
-		return
+		return false
 	if is_invulnerable:
-		return
+		return false
 	health_component.take_damage(amount)
+	return true
+
+
+## Помечает следующий вход в Hurt как "прибит к стене" - флаг нужно
+## выставить ДО take_damage(), по той же причине, что и enemy.pin_next_stagger()
+## на враге: take_damage() может сам перевести игрока в Hurt через сигнал
+## damaged (см. _on_health_component_damaged), и повторный
+## transition_to("Hurt") в уже активное состояние будет no-op'ом (см.
+## CLAUDE.md, 17.08.2026) - is_wall_pinned обязан быть true до ПЕРВОГО
+## enter().
+func mark_next_hurt_as_pinned() -> void:
+	var hurt: Node = state_machine.states.get("Hurt")
+	if hurt:
+		hurt.is_wall_pinned = true
+
+
+## Форсирует переход в Hurt, минуя can_be_interrupted() базового State -
+## обычная реакция на урон (_on_health_component_damaged) сама проверяет
+## can_be_interrupted() и может ничего не сделать, если игрок сейчас в
+## непрерываемом состоянии; прибивание кинжалом Гонца обязано пробить
+## гарантированно, как и зеркальная механика на враге. Вызывающий код
+## (boss_dagger.gd) зовёт это только после take_damage(), вернувшего true.
+func pin_player() -> void:
+	if state_machine.current_state.name == "Death":
+		return
+	state_machine.transition_to("Hurt")
 
 
 func get_current_health() -> int:
@@ -232,6 +306,8 @@ func shake_camera() -> void:
 ## heavy_attack_state.gd, а не всегда в Idle.
 func _select_melee_weapon(weapon: MeleeWeaponData) -> void:
 	if current_melee_weapon == weapon:
+		return
+	if state_machine.current_state.name == "Death":
 		return
 
 	current_melee_weapon = weapon

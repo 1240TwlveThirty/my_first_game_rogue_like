@@ -45,7 +45,7 @@ func add_charge() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if TimeStop.is_active:
+	if TimeStop.is_active and TimeStop.exempt_actor != self:
 		return
 
 	if is_stuck:
